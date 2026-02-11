@@ -50,3 +50,27 @@ def fk_child_non_null(evaluator: MacroEvaluator, child_alias: str, mappings: lis
     """
     preds = [_col(child_alias, c).is_(exp.null()).not_() for c, _ in mappings]
     return exp.and_(*preds) if preds else exp.true()
+
+
+
+
+@macro()
+def list_append(evaluator, items, item):
+    """
+    Append a single item to a list.
+
+    Usage:
+      @DEF(hash_exclude, @list_append(@meta_cols, '__data_snapshot_date'));
+    """
+    return list(items) + [item]
+
+
+@macro()
+def list_extend(evaluator, items, more_items):
+    """
+    Extend a list with another list (or tuple).
+
+    Usage:
+      @DEF(hash_exclude, @list_extend(@meta_cols, ['__data_snapshot_date', '__rn']));
+    """
+    return list(items) + list(more_items)

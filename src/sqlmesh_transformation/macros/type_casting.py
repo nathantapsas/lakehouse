@@ -46,25 +46,21 @@ def clean_account_number(
 def clean_currency_code(
     evaluator: MacroEvaluator,
     value: str,
-    cad_symbols: set[str] = {"CAD", "C"},
-    usd_symbols: set[str] = {"USD", "U"},
     *,
     on_null: str = "preserve",
     null_default: str | None = None,
 ) -> str:
-    cad_list = ", ".join(f"'{s}'" for s in cad_symbols)
-    usd_list = ", ".join(f"'{s}'" for s in usd_symbols)
 
     # TODO: Figure out what currency code "F", "E", "D", "Y" and "A" are
     expr = f"""
         CASE
             WHEN UPPER(TRIM({value})) = 'F' THEN 'UNKNOWN'
-            WHEN UPPER(TRIM({value})) = 'Y' THEN 'UNKNOWN'
             WHEN UPPER(TRIM({value})) = 'D' THEN 'UNKNOWN'
-            WHEN UPPER(TRIM({value})) = 'A' THEN 'UNKNOWN'
-            WHEN UPPER(TRIM({value})) = 'E' THEN 'UNKNOWN'
-            WHEN UPPER(TRIM({value})) IN ({cad_list}) THEN 'CAD'
-            WHEN UPPER(TRIM({value})) IN ({usd_list}) THEN 'USD'
+            WHEN UPPER(TRIM({value})) = 'Y' THEN 'JPY'
+            WHEN UPPER(TRIM({value})) = 'A' THEN 'AUD'
+            WHEN UPPER(TRIM({value})) = 'E' THEN 'EUR'
+            WHEN UPPER(TRIM({value})) = 'C' THEN 'CAD'
+            WHEN UPPER(TRIM({value})) = 'U' THEN 'USD'
             ELSE error('Unrecognized currency code: ' || {value})
         END
     """

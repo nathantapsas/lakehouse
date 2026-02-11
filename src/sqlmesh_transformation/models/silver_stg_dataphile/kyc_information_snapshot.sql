@@ -11,7 +11,8 @@ MODEL (
       parent_model := silver_stg_dataphile.client_snapshot,
       mappings := [(client_code, client_code)],
       child_time_column := '__data_snapshot_date',
-      parent_time_column := '__data_snapshot_date'
+      parent_time_column := '__data_snapshot_date',
+      blocking := false
     )
   )
 );

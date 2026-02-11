@@ -118,6 +118,15 @@
     __source_file: TEXT
     __ingested_at: TIMESTAMPTZ
     __data_snapshot_date: DATE
+    KYC Objective Description: TEXT
+    Deceased holder Date of Death: TEXT
+    Deceased Holder Name: TEXT
+    Deceased Holder SIN: TEXT
+    Reporting Holder Birthdate: TEXT
+    Reporting Holder Name: TEXT
+    Reporting Holder SIN: TEXT
+    TFSA CRA Open Year: TEXT
+    TSFA Non-Res Date: TEXT
   gateway: default
 - name: '"dataphile_catalog"."bronze"."client"'
   columns:
@@ -176,6 +185,8 @@
   gateway: default
 - name: '"dataphile_catalog"."bronze"."kyc_information"'
   columns:
+    client_code: TEXT
+    Client ID: TEXT
     sex: TEXT
     date_met: TEXT
     employer_name: TEXT
@@ -203,12 +214,11 @@
     fixed_assets: TEXT
     liquid_assets: TEXT
     income: TEXT
-    client_code: TEXT
+    __source_file: TEXT
+    __ingested_at: TIMESTAMPTZ
+    __data_snapshot_date: DATE
     Bank Ref: TEXT
     Last Dt: TEXT
     Last User: TEXT
     Lead Type: TEXT
-    __source_file: TEXT
-    __ingested_at: TIMESTAMPTZ
-    __data_snapshot_date: DATE
   gateway: default

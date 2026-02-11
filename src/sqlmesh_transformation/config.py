@@ -6,7 +6,15 @@ from sqlmesh.core.config import (
     LinterConfig
 )
 from sqlmesh.core.config.connection import DuckDBAttachOptions
-from core.settings import DUCKLAKE_CATALOG_DB_PATH, DUCKLAKE_STORAGE_DIR, DUCKLAKE_CATALOG_NAME, STATE_DB_PATH, PACKAGE_CACHE_DIR
+from core.settings import (
+    SYSTEM_COL_INGESTED_AT,
+    DUCKLAKE_CATALOG_DB_PATH, 
+    DUCKLAKE_STORAGE_DIR, 
+    DUCKLAKE_CATALOG_NAME, 
+    STATE_DB_PATH, 
+    PACKAGE_CACHE_DIR, 
+    SYSTEM_COL_DATA_SNAPSHOT_DATE
+)
 
 
 config = Config(
@@ -14,12 +22,16 @@ config = Config(
     disable_anonymized_analytics=True,
     model_defaults=ModelDefaultsConfig(
         dialect="duckdb",
-        start="2026-01-01",
+        start="2026-02-01",
         cron="@daily"
     ),
     cache_dir=f"{str(PACKAGE_CACHE_DIR)}/.sqlmesh",
     gateways={
         "default": GatewayConfig(
+            variables={
+                "sys_col_data_snapshot_date": SYSTEM_COL_DATA_SNAPSHOT_DATE,
+                "sys_col_ingested_at": SYSTEM_COL_INGESTED_AT
+            },
             connection=DuckDBConnectionConfig(
                 catalogs= { 
                     DUCKLAKE_CATALOG_NAME: DuckDBAttachOptions(
