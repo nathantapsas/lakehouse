@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: ingestion-postgres
+    environment:
+      POSTGRES_USER: ingestion
+      POSTGRES_PASSWORD: ingestion
+      POSTGRES_DB: ingestion
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata_ingestion:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ingestion -d ingestion_dev"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+
+volumes:
+  pgdata_ingestion:

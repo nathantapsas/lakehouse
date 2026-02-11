@@ -1,0 +1,183 @@
+name: security
+
+loading_strategy: incremental
+
+source:
+  file_path_glob_pattern: "DD_security_table_*.txt"
+  delimiter: "\t"
+  encoding: "latin"
+  quoting: 1
+  quote_char: '"'
+
+# table_schema:
+  # business_key: [cusip]
+
+columns:
+  cusip:
+    csv_header: 
+      - "Cusip/Security (Position)"
+      - "Cusip/Security (Trans)"
+      - "Cusip"
+
+  security_class:
+    csv_header: "Security Class"
+
+  isin:
+    csv_header: "ISIN"
+
+  security_name:
+    csv_header: "Name"
+
+  status:
+    csv_header: "Status (Securities)"
+
+  market:
+    csv_header: "Market"
+
+  primary_symbol:
+    csv_header: "Primary Symbol"
+
+  trades_ok:
+    csv_header: "Trades OK"
+    type_caster:
+      output_type: boolean
+      true_values: ["YES"]
+
+  currency:
+    csv_header: "Funds"
+
+  strike_price:
+    csv_header: "Strike Price"
+
+  ask_price:
+    csv_header: "Ask"
+
+  bid_price:
+    csv_header: "Bid"
+
+  last_trade_price:
+    csv_header: "Last Trade"
+
+  loan_value_long_1:
+    csv_header: "Firm LV-Long 1"
+    type_caster:
+      output_type: decimal
+
+  loan_value_long_2:
+    csv_header: "Firm LV-Long 2"
+    type_caster:
+      output_type: decimal
+
+  loan_value_long_3:
+    csv_header: "Firm LV-Long 3"
+    type_caster:
+      output_type: decimal
+
+  loan_value_short_1:
+    csv_header: "Firm LV-Short 1"
+    type_caster:
+      output_type: decimal
+
+  loan_value_short_2:
+    csv_header: "Firm LV-Short 2"
+    type_caster:
+      output_type: decimal
+
+  loan_value_short_3:
+    csv_header: "Firm LV-Short 3"
+    type_caster:
+      output_type: decimal
+
+  decimals:
+    csv_header: "Decimals"
+    type_caster:
+      output_type: integer
+
+  price_source:
+    csv_header: "Price Source"
+
+  price_factor:
+    csv_header: "Price Factor"
+
+  price_status:
+    csv_header: "Price Status"
+
+  manual_price:
+    csv_header: "Manual Price"
+    type_caster:
+      output_type: boolean
+      true_values: ["YES"]
+
+  incorporation_country:
+    csv_header: "Incorporation Country"
+
+  us_eci:
+    csv_header: "US ECI\u00a0"
+    type_caster:
+      output_type: boolean
+
+  portfolio_class:
+    csv_header: "Portfolio Class"
+
+  call_put:
+    csv_header: "Call/Put"
+
+  under_symbol:
+    csv_header: "Undr Symbol"
+
+  under_cusip:
+    csv_header: "Under CUSIP"
+
+  expiry_date:
+    csv_header: "Expiry Date"
+    type_caster:
+      output_type: date
+      interpret_mode: pivot
+      pivot_year_short: 22
+
+  code:
+    csv_header: "Security Code"
+
+  gics_sub_industry:
+    csv_header: "GICS Sub-industry"
+
+  category:
+    csv_header: "Category"
+
+  reduced_margin_eligible:
+    csv_header: "Reduced Margin"
+    type_caster:
+      output_type: boolean
+
+  trades_options:
+    csv_header: "Trades Options"
+    type_caster:
+      output_type: boolean
+
+  convertible:
+    csv_header: "Convertible"
+    type_caster:
+      output_type: boolean
+
+  cds_eligible:
+    csv_header: "CDS Elig?"
+    type_caster:
+      output_type: boolean
+
+  cds_status:
+    csv_header: "CDS Status"
+
+  cds_subtype:
+    csv_header: "CDS Subtype"
+
+  comment:
+    csv_header: "Security Comment"
+
+  fund_class:
+    csv_header: "Fund Class"
+
+  product:
+    csv_header: "Product"
+
+  registered_doc:
+    csv_header: "Registered Doc"

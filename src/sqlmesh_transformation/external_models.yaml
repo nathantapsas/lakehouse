@@ -1,0 +1,214 @@
+- name: '"dataphile_catalog"."bronze"."account"'
+  columns:
+    account_number: TEXT
+    status: TEXT
+    close_date: TEXT
+    short_name: TEXT
+    ia_code: TEXT
+    account_type: TEXT
+    sub_type: TEXT
+    currency: TEXT
+    portfolio_type: TEXT
+    minimum_commission_check: TEXT
+    commission_type: TEXT
+    credit_int: TEXT
+    debit_int: TEXT
+    is_discretionary: TEXT
+    option_approval: TEXT
+    trades_okay: TEXT
+    class_code: TEXT
+    residence_code: TEXT
+    settle_date_balance: TEXT
+    trade_date_balance: TEXT
+    market_value: TEXT
+    equity: TEXT
+    loan_value: TEXT
+    buying_power: TEXT
+    consolidation_level: TEXT
+    crm2_inception_date: TEXT
+    inception_date_override: TEXT
+    use_spouses_birthdate: TEXT
+    crm2_eligibility_flag: TEXT
+    open_items: TEXT
+    last_activity_date: TEXT
+    closed_reason: TEXT
+    Reason Code: TEXT
+    Last Date: TEXT
+    Last Time: TEXT
+    Last User: TEXT
+    open_date: TEXT
+    Asset Charge: TEXT
+    last Interest: TEXT
+    Approved By (Account): TEXT
+    DCS CUID: TEXT
+    Last ROI Date: TEXT
+    DCS Unit Code: TEXT
+    Last Seg Dt: TEXT
+    Check Credit: TEXT
+    Last Statement: TEXT
+    Commission Amount: TEXT
+    last_trade_date: TEXT
+    Cost On Statements?: TEXT
+    Credit Limit: TEXT
+    Delivery Code: TEXT
+    Delinquent: TEXT
+    Delivery Inst: TEXT
+    Destination Route: TEXT
+    IA Net %: TEXT
+    DTC Additional Party ID: TEXT
+    DTC Additional Party Instr 1: TEXT
+    DTC Additional Party Instr 2: TEXT
+    DTC Agent ID: TEXT
+    DTC Bank Account: TEXT
+    DTC Institution ID: TEXT
+    ESIR Number: TEXT
+    DTC Participant Num: TEXT
+    DTC Party Acct: TEXT
+    Plan Non Res Date: TEXT
+    Reason Closed (Account): TEXT
+    Guarantor Account: TEXT
+    Participant: TEXT
+    KYC Update Date: TEXT
+    Lead Account: TEXT
+    Pension Registration: TEXT
+    Leveraged?: TEXT
+    Rights: TEXT
+    National Policy 41: TEXT
+    RRIF Open Date: TEXT
+    National Policy 41b: TEXT
+    National Policy 41c: TEXT
+    NI54 E-Mail: TEXT
+    NI54 Language: TEXT
+    NI54 Change Date: TEXT
+    NI54 Mail: TEXT
+    Ticket Base: TEXT
+    NI54 Objecting: TEXT
+    Trader Code: TEXT
+    Initial Trade Date: TEXT
+    NM Loan Val House 1: TEXT
+    Trustee: TEXT
+    Initiator CUID: TEXT
+    NM Loan Val House 2: TEXT
+    US Clearing Agency: TEXT
+    Institution Code: TEXT
+    NM Loan Val House 3: TEXT
+    Division: TEXT
+    NM Loan Val Reg 1: TEXT
+    NM Loan Val Reg 2: TEXT
+    NM Loan Val Reg 3: TEXT
+    NM Loan Val Custom 1: TEXT
+    NM Loan Val Custom 2: TEXT
+    NM Loan Val Custom 3: TEXT
+    client_code: TEXT
+    NASD Clearing Broker: TEXT
+    NASD Executing Broker: TEXT
+    NASD Numeric ID: TEXT
+    SSS Account Number: TEXT
+    SSS Department: TEXT
+    MF History?: TEXT
+    Monthly Statement: TEXT
+    'SSS FINS #': TEXT
+    SSS Institution Name: TEXT
+    SSS Location: TEXT
+    Account Flex Field 1: TEXT
+    Account Flex Field 2: TEXT
+    Account Flex Field 3: TEXT
+    Account Flex Field 4: TEXT
+    Account Flex Field 5: TEXT
+    __source_file: TEXT
+    __ingested_at: TIMESTAMPTZ
+    __data_snapshot_date: DATE
+  gateway: default
+- name: '"dataphile_catalog"."bronze"."client"'
+  columns:
+    client_code: TEXT
+    client_id: TEXT
+    status: TEXT
+    ia_code: TEXT
+    recipient_type: TEXT
+    first_name: TEXT
+    last_name: TEXT
+    residence_code: TEXT
+    employee: TEXT
+    monitor_code: TEXT
+    citizenship: TEXT
+    is_us_person: TEXT
+    birth_date: TEXT
+    deceased_date: TEXT
+    sin: TEXT
+    ssn: TEXT
+    corporate_id_type: TEXT
+    corporate_id: TEXT
+    spouse_name: TEXT
+    spouse_sin: TEXT
+    spouse_birth_date: TEXT
+    nrt_code: TEXT
+    household_id: TEXT
+    verification_id: TEXT
+    consolidate: TEXT
+    branch: TEXT
+    open_date: TEXT
+    close_date: TEXT
+    is_dormant: TEXT
+    E-Tax: TEXT
+    Hold Tax: TEXT
+    Credit Limit: TEXT
+    IRS Cost Method: TEXT
+    Last Dt : TEXT
+    Lst Time : TEXT
+    Last User : TEXT
+    NI54-e : TEXT
+    NI54-c : TEXT
+    NI54-d : TEXT
+    NI54-b : TEXT
+    NP54-101 : TEXT
+    GIIN: TEXT
+    Client Flex Field 1: TEXT
+    Client Flex Field 2: TEXT
+    Client Flex Field 3: TEXT
+    Client Flex Field 4: TEXT
+    Client Flex Field 5: TEXT
+    Consent To Share : TEXT
+    Client Sub Type: TEXT
+    __source_file: TEXT
+    __ingested_at: TIMESTAMPTZ
+    __data_snapshot_date: DATE
+  gateway: default
+- name: '"dataphile_catalog"."bronze"."kyc_information"'
+  columns:
+    sex: TEXT
+    date_met: TEXT
+    employer_name: TEXT
+    employer_address: TEXT
+    employer_business_type: TEXT
+    occupation: TEXT
+    approved_by: TEXT
+    years_with_employer: TEXT
+    bank_account_number: TEXT
+    bank_check: TEXT
+    credit_check: TEXT
+    met_ia: TEXT
+    investment_knowledge: TEXT
+    marital_status: TEXT
+    number_of_dependents: TEXT
+    spouse_employer_business_type: TEXT
+    spouse_employer_address: TEXT
+    spouse_years_with_employer: TEXT
+    spouse_employer_name: TEXT
+    spouse_occupation: TEXT
+    referred_by: TEXT
+    relation_name: TEXT
+    relation_position: TEXT
+    net_worth: TEXT
+    fixed_assets: TEXT
+    liquid_assets: TEXT
+    income: TEXT
+    client_code: TEXT
+    Bank Ref: TEXT
+    Last Dt: TEXT
+    Last User: TEXT
+    Lead Type: TEXT
+    __source_file: TEXT
+    __ingested_at: TIMESTAMPTZ
+    __data_snapshot_date: DATE
+  gateway: default

@@ -1,0 +1,8 @@
+.venv
+data/
+raw_data/
+**/__pycache__/
+*.pyc
+logs/
+**/.cache/
+**/*.egg-info/

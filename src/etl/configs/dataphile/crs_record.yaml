@@ -1,0 +1,64 @@
+name: crs_record
+
+loading_strategy: snapshot
+
+source:
+  file_path_glob_pattern: "DD_crs_table_*.txt"
+  delimiter: "\t"
+  encoding: "latin-1"
+  quoting: 1
+  quote_char: '"'
+
+# table_schema:
+#   business_key: [client_code, associated_party_sequence_number, sequence_number]
+
+  # foreign_keys:
+  #   - local_columns: [client_code]
+  #     remote_table: client
+  #     remote_columns: [client_code]
+    
+  #   - local_columns: [client_code, associated_party_sequence_number]
+  #     remote_table: associated_party
+  #     remote_columns: [client_code, sequence_number]
+
+
+columns:
+  client_code:
+    csv_header: "Client Code"
+    type_caster:
+      output_type: integer
+  
+  associated_party_sequence_number:
+    csv_header: "Individual Number\u00A0"
+    type_caster:
+      output_type: integer
+    
+  sequence_number:
+    csv_header: "Record\u00A0"
+    
+  certification_status:
+    csv_header: "Certification status"
+  
+  citizenship:
+    csv_header: "Citizenship\u00A0"
+  
+  tax_jurisdiction:
+    csv_header: "Tax Jurisdiction\u00A0"
+  
+  foreign_taxpayer_id:
+    csv_header: "Foreign ID\u00A0"
+  
+  reason_code:
+    csv_header: "Reason Code\u00A0"
+
+  reason_notes: 
+    csv_header: "Reason Notes"
+  
+  certified_by:
+    csv_header: "Certified By\u00A0"
+  
+  completion_date:
+    csv_header: "Completion Date\u00A0"
+    type_caster:
+      output_type: date
+      interpret_mode: "prefer_past"

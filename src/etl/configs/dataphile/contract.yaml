@@ -1,0 +1,250 @@
+
+name: contract
+
+loading_strategy: incremental
+
+source:
+  file_path_glob_pattern: "DD_contracts_table_*.txt"
+  delimiter: "\t"
+  encoding: "latin-1"
+  quoting: 1
+  quote_char: '"'
+
+# table_schema:
+#   business_key: [trade_number, process_date, client_side]
+
+  # foreign_keys:
+  #   - local_columns: [account_number]
+  #     remote_table: account
+  #     remote_columns: [account_number]
+    
+  #   - local_columns: [cusip]
+  #     remote_table: security
+  #     remote_columns: [cusip]
+    
+  #   - local_columns: [other_side_account_number]
+  #     remote_table: account
+  #     remote_columns: [account_number]
+
+
+columns:
+  account_number:
+    csv_header: "Acct Number (Contract)"
+    type_caster:
+      output_type: string
+      # normalizers:
+      #   - method: normalize_account_number
+
+  cusip:
+    csv_header: "Cusip/Security (Contract)"
+
+  trade_number:
+    csv_header: "Trade Number"
+  
+  process_date:
+    csv_header: "Process"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+  
+  settlement_date:
+    csv_header: "Settlement Date"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+
+  trade_date:
+    csv_header: "Trade Date"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+
+  ia_code:
+    csv_header: "IA (Contract)"
+
+  client_side:
+    csv_header: "Client Side (Contract)"
+    type_caster:
+      output_type: boolean
+    
+  principal_trade:
+    csv_header: "Principal Trade (Order)"
+    type_caster:
+      output_type: boolean
+    
+  other_side_account_number:
+    csv_header: "Other Side"
+    type_caster:
+      output_type: string
+      # normalizers:
+      #   - method: normalize_account_number
+
+  market:
+    csv_header: "Market (Contract)"
+  
+  order_date:
+    csv_header: "Order Date"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+  
+  reference_number:
+    csv_header: "Ref Number (Contract)"
+  
+  action:
+    csv_header: "Buy/Sell (Contract)"
+  
+  bucket_code:
+    csv_header: "Bucket Code"
+  
+  quantity:
+    csv_header: "Qty"
+  
+  fill_quantity_1:
+    csv_header: "Qty 1 (Contract)"
+    type_caster:
+      output_type: decimal
+
+  fill_quantity_2:
+    csv_header: "Qty 2 (Contract)"
+    type_caster:
+      output_type: decimal
+
+  fill_quantity_3:
+    csv_header: "Qty 3 (Contract)"
+    type_caster:
+      output_type: decimal
+
+  fill_quantity_4:
+    csv_header: "Qty 4 (Contract)"
+    type_caster:
+      output_type: decimal
+
+  fill_quantity_5:
+    csv_header: "Qty 5 (Contract)"
+    type_caster:
+      output_type: decimal
+
+  currency:
+    csv_header: "Funds (Contract)"
+  
+  fill_price_1:
+    csv_header: "Fill Price 1 (Contract)"
+    type_caster:
+      output_type: decimal
+    
+  fill_price_2:
+    csv_header: "Fill Price 2 (Contract)"
+    type_caster:
+      output_type: decimal
+
+  fill_price_3:
+    csv_header: "Fill Price 3 (Contract)"
+    type_caster:
+      output_type: decimal
+
+  fill_price_4:
+    csv_header: "Fill Price 4 (Contract)"
+    type_caster:
+      output_type: decimal
+
+  fill_price_5:
+    csv_header: "Fill Price 5 (Contract)"
+    type_caster:
+      output_type: decimal
+  
+  inventory_transfer_price:
+    csv_header: "Inventory Transfer Price"
+    type_caster:
+      output_type: decimal
+  
+  net_amount:
+    csv_header: "Net Amount (Contract)"
+    type_caster:
+      output_type: decimal
+      positive_suffix: "CR"
+  
+  exchange_rate:
+    csv_header: "Exch Rate (Contract)"
+    type_caster:
+      output_type: decimal
+
+  exchange_amount:
+    csv_header: "Exch Amount (Contract)"
+    type_caster:
+      output_type: decimal
+      positive_suffix: "CR"
+
+  gross_amount:
+    csv_header: "Gross Amount (Contract)"
+    type_caster:
+      output_type: decimal
+      negative_suffix: "-"
+
+  accrued_interest:
+    csv_header: "Accrued Interest"
+    type_caster:
+      output_type: decimal
+      positive_suffix: "CR"
+
+  trailers:
+    csv_header: "Trailers"
+  
+  kp_trailers:
+    csv_header: "KP Trailers (Contract)"
+
+  full_commission:
+    csv_header: "Full Commission"
+    type_caster:
+      output_type: boolean
+
+  commission_basis:
+    csv_header: "Comm Basis"
+
+  basic_commission:
+    csv_header: "Basic Commission"
+    type_caster:
+      output_type: decimal
+      positive_suffix: "CR"
+
+  commission:
+    csv_header: "Commission"
+    type_caster:
+      output_type: decimal
+      negative_suffix: "-"
+
+  commission_cents:
+    csv_header: "Commission Cents"
+    type_caster:
+      output_type: decimal
+      negative_suffix: "-"
+
+  cancelled:
+    csv_header: "Cancelled"
+    type_caster:
+      output_type: boolean
+
+  cancel:
+    csv_header: "Cancel"
+    type_caster:
+      output_type: boolean
+
+  cancel_date:
+    csv_header: "CXL Date"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+
+  cancel_number:
+    csv_header: "CXL Num"
+    type_caster:
+      output_type: integer
+
+  notes:
+    csv_header: "Notes"
+
+  entered_by:
+    csv_header: "Entered By"
+
+  order_number:
+    csv_header: "Order Number"

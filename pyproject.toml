@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lakehouse"
+version = "0.1.0"
+description = "A lakehouse framework for data engineering and transformation."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  # used by configs + validation
+  "pydantic>=2",
+  "pyyaml>=6",
+  "pyarrow-stubs",
+
+  # used by sqlmesh models / macros
+  "sqlmesh[lsp, web, duckdb]>=0.80",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["core*", "etl*", "ingestion*", "sqlmesh-transformation*"]
+namespaces = false
+
+# Optional but nice: makes imports predictable when running tools
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+# testpaths = ["tests"]
+

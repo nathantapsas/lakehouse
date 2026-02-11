@@ -1,0 +1,114 @@
+
+name: position
+
+loading_strategy: snapshot
+
+source:
+  file_path_glob_pattern: "DD_position_table_*.txt"
+  delimiter: "\t"
+  encoding: "latin-1"
+  quoting: 1
+  quote_char: '"'
+
+# table_schema:
+  # business_key: [account_number]
+  # foreign_keys:
+  #   - local_columns: [account_number]
+  #     remote_table: account
+  #     remote_columns: [account_number]
+    
+  #   - local_columns: [cusip]
+  #     remote_table: security
+  #     remote_columns: [cusip]
+
+
+columns:
+  account_number:
+    csv_header: "Account Number"
+    type_caster:
+      output_type: string
+      # normalizers:
+      #   - method: normalize_account_number
+
+  currency:
+    csv_header: "Funds (Account)"
+
+  cusip:
+    csv_header: "Cusip/Security (Position)"
+  
+  under_cusip:
+    csv_header: "Under Cusip (Position)"
+  
+  current_quantity:
+    csv_header: "Qty (Position)"
+    type_caster:
+      output_type: decimal
+      negative_suffix: "-"
+
+  safekeeping_quantity:
+    csv_header: "SFK Qty (Position)"
+    type_caster:
+      output_type: decimal
+      negative_suffix: "-"
+  
+  segregated_quantity:
+    csv_header: "Seg Qty (Position)"
+    type_caster:
+      output_type: decimal
+      negative_suffix: "-"
+
+  pending_quantity:
+    csv_header: "Pending Qty (Position)"
+    type_caster:
+      output_type: decimal
+      negative_suffix: "-"
+
+  cost:
+    csv_header: "Cost (Position)"
+    type_caster:
+      output_type: decimal
+      positive_suffix: "CR"
+
+  client_name_quantity:
+    csv_header: "Client Name Qty (Position)"
+    type_caster:
+      output_type: decimal
+      negative_suffix: "-"
+
+  memo_quantity:
+    csv_header: "Memo Qty (Position)"
+    type_caster:
+      output_type: decimal
+      negative_suffix: "-"
+
+  loan_value_amount:
+    csv_header: "Loan Value (Position)"
+    type_caster:
+      output_type: decimal
+      negative_suffix: "-"
+
+  market_value_amount:
+    csv_header: "Market Value (Position)"
+    type_caster:
+      output_type: decimal
+      negative_suffix: "-"
+
+  memo_cost:
+    csv_header: "Memo Cost (Position)"
+    type_caster:
+      output_type: decimal
+      negative_suffix: "-"
+
+  cost_status:
+    csv_header: "Cost Status"
+
+  cost_status_asof_date:
+    csv_header: "Cost Status Asof Date"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+    
+  memo_only:
+    csv_header: "Memo Only"
+    type_caster:
+      output_type: boolean

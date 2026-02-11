@@ -1,0 +1,126 @@
+name: kyc_information
+
+loading_strategy: snapshot
+
+source:
+  file_path_glob_pattern: "DD_kyc_table_*.txt"
+  delimiter: "\t"
+  encoding: "latin-1"
+  quoting: 1
+  quote_char: '"'
+
+# table_schema:
+#   business_key: [client_code]
+
+  # foreign_keys:
+  #   - local_columns: [client_code]
+  #     remote_table: client
+  #     remote_columns: [client_code]
+    
+columns:
+  client_code:
+    csv_header: "Client Code"
+    type_caster:
+      output_type: integer
+  
+  date_met:
+    csv_header: "Date Met"
+    type_caster:
+      output_type: date
+      interpret_mode: "prefer_past"
+
+  approved_by:
+    csv_header: "Approved By"
+  
+  met_ia:
+    csv_header: "IA Met?"
+    type_caster:
+      output_type: boolean
+  
+  referred_by:
+    csv_header: "Referred By"
+  
+  # Todo: rename
+  relation_name:
+    csv_header: "Relation Name"
+  
+  # Todo: rename
+  relation_position:
+    csv_header: "Relation Position"
+  
+  bank_account_number:
+    csv_header: "Bank Account"
+  
+  bank_check:
+    csv_header: "Bank Check?"
+    type_caster:
+      output_type: boolean
+  
+  credit_check:
+    csv_header: "Credit Check?"
+    type_caster:
+      output_type: boolean
+
+  occupation:
+    csv_header: "Occupation"
+
+  employer_name:
+    csv_header: "Employee Name"
+
+  employer_business_type:
+    csv_header: "Employee Type"
+
+  employer_address:
+    csv_header: "Employee Address"
+
+  years_with_employer:
+    csv_header: "Employee Years"
+
+  sex:
+    csv_header: "Sex"
+
+  marital_status:
+    csv_header: "Marital Stat"
+
+  number_of_dependents:
+    csv_header: "Number of Dependents"
+    type_caster:
+      output_type: integer
+
+  spouse_occupation:
+    csv_header: "Spouse Occupation"
+
+  spouse_employer_name:
+    csv_header: "Spouse Employer"
+
+  spouse_employer_business_type:
+    csv_header: "Spouse Emp Type"
+
+  spouse_employer_address:
+    csv_header: "Spouse Emp. Address"
+
+  spouse_years_with_employer:
+    csv_header: "Spouse Emp. Years"
+
+  income:
+    csv_header: "Est Earnings"
+    type_caster:
+      output_type: decimal
+
+  net_worth:
+    csv_header: "Est Net Worth"
+    type_caster:
+      output_type: decimal
+
+  fixed_assets:
+    csv_header: "Fixed Assets"
+    type_caster:
+      output_type: decimal
+
+  liquid_assets:
+    csv_header: "Liquid Assets"
+    type_caster:
+      output_type: decimal
+
+  investment_knowledge:
+    csv_header: "Invest Knowledge"

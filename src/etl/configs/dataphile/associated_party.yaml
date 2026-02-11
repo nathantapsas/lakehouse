@@ -1,0 +1,321 @@
+name: associated_party
+
+loading_strategy: snapshot
+
+source:
+  file_path_glob_pattern: "DD_assoc_party_table_*.txt"
+  delimiter: "\t"
+  encoding: "latin-1"
+  quoting: 1
+  quote_char: '"'
+
+# table_schema:
+#   business_key: [client_code, sequence_number]
+
+  # foreign_keys:
+  #   - local_columns: [client_code]
+  #     remote_table: client
+  #     remote_columns: [client_code]
+
+columns:
+  client_code:
+    csv_header: ["Client Code", "Client"]
+    type_caster:
+      output_type: integer
+
+  sequence_number:
+    csv_header: "Individual Seq Number"
+    type_caster:
+      output_type: integer
+
+  title:
+    csv_header: "Title"
+
+  record_status:
+    csv_header: "Status"
+
+  uci:
+    csv_header: "CDIC Unique Client Identifier"
+
+  address_number:
+    csv_header: "Address Number"
+    type_caster:
+      output_type: integer
+
+  first_name:
+    csv_header: "Client's first name"
+
+  last_name:
+    csv_header: "Client Surname"
+
+  birth_date:
+    csv_header: "Birth Date"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+
+  date_deleted:
+    csv_header: "Date Deleted"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+
+  residence_code:
+    csv_header: "Residence Code"
+
+  citizenship:
+    csv_header: "Citizenship"
+
+  country_of_birth:
+    csv_header: "Country of Birth"
+
+  sin:
+    csv_header: "SIN"
+
+  ssn:
+    csv_header: "SSN"
+
+  us_taxpayer_id_type:
+    csv_header: "US Taxpayer ID Type"
+
+  foreign_taxpayer_id:
+    csv_header: "Foreign Taxpayer ID"
+
+  lei:
+    csv_header: "LEI/CICI"
+
+  registration_number:
+    csv_header: "Registration Number"
+
+  incorporation_number:
+    csv_header: "Incorporation Number"
+
+  identification_received:
+    csv_header: "Ident Received?"
+    type_caster:
+      output_type: boolean
+      true_values: ["yes"]
+
+  verification_id:
+    csv_header: "Verification ID"
+
+  uci_percentage:
+    csv_header: "UCI Percentage"
+    type_caster:
+      output_type: decimal
+
+  recipient_code:
+    csv_header: "1042 Recipient Code"
+    type_caster:
+      output_type: integer
+
+  employer_name:
+    csv_header: "Emp Name"
+
+  employer_address:
+    csv_header: "Emp Addr"
+
+  employer_type:
+    csv_header: "Emp Type"
+
+  occupation:
+    csv_header: "Occupation"
+
+  employment_years:
+    csv_header: "Employer Years"
+
+  marital_status:
+    csv_header: "Marital Stat"
+
+  number_of_dependents:
+    csv_header: "No Dependents"
+    type_caster:
+      output_type: integer
+
+  net_worth:
+    csv_header: "Est Net Worth"
+    type_caster:
+      output_type: decimal
+
+  fixed_assets:
+    csv_header: "Fixed Assets"
+    type_caster:
+      output_type: decimal
+
+  liquid_assets:
+    csv_header: "Liquid Assets"
+    type_caster:
+      output_type: decimal
+
+  income:
+    csv_header: "Est Earnings"
+    type_caster:
+      output_type: decimal
+
+  investment_knowledge:
+    csv_header: "Invest Knowledge"
+
+  sex:
+    csv_header: "Sex"
+
+  fifty_percent_us_person:
+    csv_header: "50%+ US Person"
+    type_caster:
+      output_type: boolean
+      true_values: ["YES"]
+
+  is_snowbird:
+    csv_header: "Snowbird"
+    type_caster:
+      output_type: boolean
+      true_values: ["YES"]
+
+  transfer_funds_to_us:
+    csv_header: "Transfer funds to US"
+    type_caster:
+      output_type: boolean
+      true_values: ["YES"]
+
+  backup_withholding:
+    csv_header: "Backup Withholding?"
+    type_caster:
+      output_type: boolean
+
+  w9_date_received:
+    csv_header: "W-9 Date Received"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+
+  w8_ben_date_received:
+    csv_header: "W8-BEN Date Received"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+
+  w8_imy_on_file:
+    csv_header: "W8-IMY On File?"
+    type_caster:
+      output_type: boolean
+
+  w8_imy_identification_type_received:
+    csv_header: "W8-IMY Ident Received"
+
+  w8_imy_date_received:
+    csv_header: "W8-IMY Date Received"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+
+  w9_on_file:
+    csv_header: "W-9 On File?"
+    type_caster:
+      output_type: boolean
+
+  w8_ben_required:
+    csv_header: "W8-BEN Required"
+    type_caster:
+      output_type: boolean
+
+  w8_exp_received:
+    csv_header: "W8-EXP Received?"
+    type_caster:
+      output_type: boolean
+
+  exempt_from_reporting:
+    csv_header: "Exempt from Reporting"
+    type_caster:
+      output_type: boolean
+
+  exempt_from_withholding:
+    csv_header: "Exempt from Withholding"
+    type_caster:
+      output_type: boolean
+
+  how_id_expiry_date:
+    csv_header: "How ID Expiry Date"
+    type_caster:
+      output_type: date
+      interpret_mode: pivot
+      pivot_year_short: 65
+
+  certification_by:
+    csv_header: "Certification By"
+
+  completion_date:
+    csv_header: "Completion Date"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+
+  cra_dividend_nrt_rate:
+    csv_header: "CRA Dividend NRT Rate"
+    type_caster:
+      output_type: decimal
+
+  cra_trust_nrt_rate:
+    csv_header: "CRA Trust NRT Rate"
+    type_caster:
+      output_type: decimal
+
+  nrt_document_date:
+    csv_header: "NRT Document Date"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+
+  confidentiality_waiver:
+    csv_header: "Confidentiality Waiver"
+    type_caster:
+      output_type: boolean
+
+  cra_id_details:
+    csv_header: "CRA ID Details"
+
+  cra_treaty:
+    csv_header: "CRA Treaty"
+    type_caster:
+      output_type: boolean
+
+  identification_type_received:
+    csv_header: "Ident Type Received"
+    type_caster:
+      output_type: integer
+
+  date_identification_received:
+    csv_header: "Date Ident Received"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+
+  alternate_identification_type:
+    csv_header: "Alternate Ident Type"
+
+  nrt_document_type:
+    csv_header: "NRT Document Type"
+
+  limitation_of_benefits:
+    csv_header: "Limitation of Benefits?"
+
+  type_of_intermediary:
+    csv_header: "Type of Intermediary"
+
+  crs_holder_type:
+    csv_header: "CRS Holder Type\u00a0"
+
+  fatca_certification_status:
+    csv_header: "Certification Status"
+
+  beneficial_owner_id:
+    csv_header: "Beneficial Owner ID"
+
+  holder_type:
+    csv_header: "Holder type"
+
+  holder_sub_type:
+    csv_header: "Holder Subtype"
+
+  renounced_us_citizenship:
+    csv_header: "Renounced U.S. Citizenship?"
+    type_caster:
+      output_type: boolean

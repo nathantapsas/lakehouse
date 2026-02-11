@@ -1,0 +1,225 @@
+
+name: account
+
+loading_strategy: snapshot
+
+source:
+  file_path_glob_pattern: "DD_account_table_*.txt"
+  delimiter: "\t"
+  encoding: "latin-1"
+  quoting: 1
+  quote_char: '"'
+
+business_key: [account_number]
+
+foreign_keys:
+  - local_columns: [client_code]
+    remote_table: client
+    remote_columns: [client_code]
+
+
+columns:
+  account_number:
+    csv_header: "Account Number"
+    type_caster:
+      output_type: string
+      # normalizers:
+      #   - method: normalize_account_number
+
+  client_code:
+    csv_header: "Client Code"
+    type_caster:
+      output_type: integer
+    
+  ia_code:
+    csv_header: "IA (Account)"
+  
+  sub_type:
+    csv_header: "Account Sub Type"
+  
+  residence_code:
+    csv_header: "Residence (Account)"
+
+  status:
+    csv_header: "Status (Account)"
+  
+  short_name:
+    csv_header: "Short Name (Account)"
+
+  trades_okay:
+    csv_header: "Trades OK"
+    type_caster:
+      output_type: boolean
+    
+  # 2 digit date
+  open_date:
+    csv_header: "Open Date (Account)"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+
+  # 2 digit date
+  close_date:
+    csv_header: "Close Date (Account)"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+
+  closed_reason:
+    csv_header: "Reason"
+
+  # 2 digit date
+  last_activity_date:
+    csv_header: "Last Activity Date"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+
+  # 2 digit date
+  last_trade_date:
+    csv_header: "Last Trade Date"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+
+  account_type:
+    csv_header: "Account Type"
+
+  portfolio_type:
+    csv_header: "Portfolio Type"
+
+  class_code:
+    csv_header: "Class (Account)"
+
+  minimum_commission_check:
+    csv_header: "Minimum Commission?"
+    type_caster:
+      output_type: boolean
+
+  commission_type:
+    csv_header: "Type of Commission"
+
+  credit_int:
+    csv_header: "Credit Int"
+
+  debit_int:
+    csv_header: "Debit Int"
+
+  is_discretionary:
+    csv_header: "Discretionary"
+    type_caster:
+      output_type: boolean
+      true_values: ["YES"]
+
+  open_items:
+    csv_header: "Open Item"
+    type_caster:
+      output_type: boolean
+      true_values: ["YES"]
+  
+  option_approval:
+    csv_header: "Option Approval"
+
+  consolidation_level:
+    csv_header: "Consolidation Level"
+    type_caster:
+      output_type: integer
+  
+  currency:
+    csv_header: "Funds (Account)"
+
+  market_value:
+    csv_header: "Market Value (Account)"
+    type_caster:
+      output_type: decimal
+      negative_suffix: "CR"
+  
+  equity:
+    csv_header: "Equity/RTS (Account)"
+    type_caster:
+      output_type: decimal
+      negative_prefix: "-"
+  
+  loan_value:
+    csv_header: "Loan Value (Account)"
+    type_caster:
+      output_type: decimal
+      negative_suffix: "CR"
+
+  buying_power:
+    csv_header: "Buy Pwr/RTM (Account)"
+    type_caster:
+      output_type: decimal
+      negative_suffix: "CR"
+
+  settle_date_balance:
+    csv_header: "S/D Balance (Account)"
+    type_caster:
+      output_type: decimal
+      positive_suffix: "CR"
+
+  trade_date_balance:
+    csv_header: "T/D Balance (Account)"
+    type_caster:
+      output_type: decimal
+      positive_suffix: "CR"
+
+  # 2 digit date
+  crm2_inception_date:
+    csv_header: "CRM2 Inception Date"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+
+  crm2_eligibility_flag:
+    csv_header: "CRM2 Eligibility Flag"
+
+  inception_date_override:
+    csv_header: "Inception Date Override"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+
+  use_spouses_birthdate:
+    csv_header: "RRIF Birthdate"
+    type_caster:
+      output_type: boolean
+      true_values: ["S"]
+      false_values: ["", "A"]
+    
+  # # 2 digit date
+  # last_date:
+  #   csv_header: "Last Date"
+  #   type_caster:
+  #     output_type: date
+  #     interpret_mode: prefer_past
+  
+  # # 2 digit date
+  # last_interest_date:
+  #   csv_header: "Last Interest"
+  #   type_caster:
+  #     output_type: date
+  #     interpret_mode: prefer_past
+  
+  # # 2 digit date
+  # last_roi_date:
+  #   csv_header: "Last ROI Date"
+  #   type_caster:
+  #     output_type: date
+  #     interpret_mode: prefer_past
+  
+  # # 2 digit date
+  # last_statement_date:
+  #   csv_header: "Last Statement"
+  #   type_caster:
+  #     output_type: date
+  #     interpret_mode: prefer_past
+  
+  
+
+
+
+
+
+    
+

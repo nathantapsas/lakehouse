@@ -1,0 +1,130 @@
+
+name: client
+
+loading_strategy: snapshot
+
+source:
+  file_path_glob_pattern: "DD_client_table_*.txt"
+  delimiter: "\t"
+  encoding: "latin-1"
+  quoting: 1
+  quote_char: '"'
+
+# table_schema:
+#   business_key: [client_code]
+
+columns:
+  client_code:
+    csv_header: "Client Code"
+    type_caster:
+      output_type: integer
+
+  client_id:
+    csv_header: "Client ID"
+    
+  ia_code:
+    csv_header: "IA (Client)"
+  
+  residence_code:
+    csv_header: "Residence"
+  
+  household_id:
+    csv_header: "House ID"
+
+  status:
+    csv_header: "Status (Client)"
+  
+  is_dormant:
+    csv_header: "Indicates if client is dormant"
+    type_caster:
+      output_type: boolean
+      true_values: ["YES"]
+
+  recipient_type:
+    csv_header: "Recipient Type"
+    
+  first_name:
+    csv_header: "First Name (Client)"
+
+  last_name:
+    csv_header: "Last Name (Client)"
+
+  branch:
+    csv_header: "Branch"
+
+  open_date:
+    csv_header: "Open Date (Client)"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+
+  close_date:
+    csv_header: "Client Close Date"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+
+  citizenship:
+    csv_header: "Citizenship"
+
+  is_us_person:
+    csv_header: "US Person"
+    type_caster:
+      output_type: boolean
+      true_values: ["YES"]
+
+  nrt_code:
+    csv_header: "NRT Code"
+
+  birth_date:
+    csv_header: "Birth Date (Client)"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+
+  deceased_date:
+    csv_header: "Decease Date (Client)"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+
+  employee:
+    csv_header: "Employee"
+
+  sin:
+    csv_header: "SIN"
+
+  ssn:
+    csv_header: "SSN/TIN"
+
+  corporate_id_type:
+    csv_header: "Corp ID Type"
+  
+  corporate_id:
+    csv_header: "Corporate ID"
+
+  verification_id:
+    csv_header: "ID Type"
+  
+  consolidate:
+    csv_header: "Consolidate"
+    type_caster:
+      output_type: "boolean"
+      true_values: ["YES"]
+
+  spouse_name:
+    csv_header: "Spouse Name"
+  
+  spouse_sin:
+    csv_header: "Spousal SIN"
+  
+  spouse_birth_date:
+    csv_header: "Spouse Birth Date"
+    type_caster:
+      output_type: "date"
+      interpret_mode: "prefer_past"
+    
+  monitor_code:
+    csv_header: "Monitor Code"
+  
+

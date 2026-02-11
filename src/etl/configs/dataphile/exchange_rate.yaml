@@ -1,0 +1,35 @@
+
+name: exchange_rate
+
+loading_strategy: snapshot
+
+source:
+  file_path_glob_pattern: "DD_exchange_rate_table_*.txt"
+  delimiter: "\t"
+  encoding: "latin-1"
+  quoting: 1
+  quote_char: '"'
+
+# table_schema:
+#   business_key: [date, time, buy_currency, sell_currency]
+
+columns:
+  date:
+    csv_header: "As of"
+    type_caster:
+      output_type: date
+      interpret_mode: "prefer_past"
+
+  time:
+    csv_header: "Time"
+
+  buy_currency:
+    csv_header: "Buy"
+
+  sell_currency:
+    csv_header: "Sell"
+
+  exchange_rate:
+    csv_header: "Rate"
+    type_caster:
+      output_type: decimal

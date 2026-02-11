@@ -1,0 +1,72 @@
+
+name: fee_group
+
+loading_strategy: snapshot
+
+source:
+  file_path_glob_pattern: "DD_fee_group_table*.txt"
+  delimiter: "\t"
+  encoding: "latin-1"
+  quoting: 1
+  quote_char: '"'
+
+# table_schema:
+#   business_key: [group_id]
+
+columns:
+  group_id:
+    csv_header: "Group ID"
+    type_caster:
+      output_type: integer
+  
+  group_name:
+    csv_header: "Group Name"
+
+  ia_code:
+    csv_header: "IA"
+  
+  money_manager_code:
+    csv_header: "Money Mgr Code"
+  
+  fund_type:
+    csv_header: "Fund Type"
+  
+  group_portfolio_type:
+    csv_header: "Group Type"
+  
+  fee_basis:
+    csv_header: "Fee Basis"
+  
+  fee_adjustment_type:
+    csv_header: "Fee Adjustment Type"
+  
+  fee_adjustment:
+    csv_header: "Fee Adjustment"
+  
+  # Check the date interpretation mode
+  anniversary_date:
+    csv_header: "Anniversary Date"
+    type_caster:
+      output_type: date
+      interpret_mode: "pivot"
+      pivot_year_short: 50
+  
+  number_of_trades_allowed:
+    csv_header: "Trades Allowed"
+    type_caster:
+      output_type: integer
+  
+  free_trades_available:
+    csv_header: "Free Trades Avail"
+    type_caster:
+      output_type: integer
+
+  minimum_fee:
+    csv_header: "Minimum Fee"
+    type_caster:
+      output_type: decimal
+    
+  rate:
+    csv_header: "Rate"
+    type_caster:
+      output_type: decimal

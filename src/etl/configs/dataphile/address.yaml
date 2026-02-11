@@ -1,0 +1,209 @@
+name: address
+
+loading_strategy: snapshot
+
+source:
+  file_path_glob_pattern: "DD_address_table_*.txt"
+  delimiter: "\t"
+  encoding: "latin-1"
+  quoting: 1
+  quote_char: '"'
+
+# table_schema:
+#   business_key: [client_code, account_number, sequence_number]
+
+  # foreign_keys:
+  #   - local_columns: [client_code]
+  #     remote_table: client
+  #     remote_columns: [client_code]
+
+  #   - local_columns: [account_number]
+  #     remote_table: account
+  #     remote_columns: [account_number]
+
+columns:
+  client_code:
+    csv_header: "Client Code"
+    type_caster:
+      output_type: integer
+
+  account_number:
+    csv_header: "Account"
+    # transform: clean_account_number
+    type_caster:
+      output_type: string
+      # normalizers:
+      #   - method: normalize_account_number
+
+  sequence_number:
+    csv_header: "Address Number"
+    type_caster:
+      output_type: integer
+
+  is_structured:
+    csv_header: "Structured Address?"
+    type_caster:
+      output_type: boolean
+      true_values: ["YES"]
+
+  is_civic:
+    csv_header: "Civic Address?"
+    type_caster:
+      output_type: boolean
+      true_values: ["YES"]
+
+  send_statement:
+    csv_header: "Send Statement"
+    type_caster:
+      output_type: boolean
+      true_values: ["YES"]
+
+  statement_copies:
+    csv_header: "Statement Copies"
+    type_caster:
+      output_type: integer
+
+  confirm_copies:
+    csv_header: "Confirm Copies"
+    type_caster:
+      output_type: integer
+
+  internal_confirm_copies:
+    csv_header: "Int Confirm Copies"
+    type_caster:
+      output_type: integer
+
+  hold_statement:
+    csv_header: "Hold Statement"
+    type_caster:
+      output_type: boolean
+      true_values: ["YES"]
+
+  electronic_confirm_flag:
+    csv_header: "E-Confirm"
+
+  electronic_statement_flag:
+    csv_header: "E-Stmt"
+
+  electronic_performance_flag:
+    csv_header: "E-Perf\u00a0"
+
+  line_1:
+    csv_header: "Addr Line 1"
+
+  line_2:
+    csv_header: "Addr Line 2"
+
+  line_3:
+    csv_header: "Addr Line 3"
+
+  line_4:
+    csv_header: "Addr Line 4"
+
+  line_5:
+    csv_header: "Addr Line 5"
+
+  line_6:
+    csv_header: "Addr Line 6"
+
+  line_7:
+    csv_header: "Addr Line 7"
+
+  line_8:
+    csv_header: "Addr Line 8"
+
+  unit_number:
+    csv_header: "Unit Number"
+
+  unit_type:
+    csv_header: "Unit Type"
+
+  civic_number:
+    csv_header: "Civic Number"
+
+  street:
+    csv_header: "Street"
+
+  street_type:
+    csv_header: "Street Type"
+
+  direction:
+    csv_header: "Direction"
+
+  city:
+    csv_header: "City"
+
+  province:
+    csv_header: "Province/State"
+
+  postal_code:
+    csv_header: "Postal Code/ZIP"
+
+  country:
+    csv_header: "Country"
+
+  station_name:
+    csv_header: "Station Name"
+
+  station_type:
+    csv_header: "Station Type"
+
+  mail_mode:
+    csv_header: "Mail Mode"
+
+  mail_box:
+    csv_header: "Mail Box/Bag"
+
+  mail_station:
+    csv_header: "Mail Station"
+
+  mail_id:
+    csv_header: "Mail Id"
+
+  cell_phone:
+    csv_header: "Cell Phone"
+
+  home_phone:
+    csv_header: "Home Phone"
+
+  work_phone:
+    csv_header: "Work Phone"
+
+  other_phone_1:
+    csv_header: "Other Phone"
+
+  other_phone_2:
+    csv_header: "Other Phone.1"
+
+  other_phone_3:
+    csv_header: "Other Phone.2"
+
+  other_phone_4:
+    csv_header: "Other Phone.3"
+
+  fax:
+    csv_header: "Fax Phone"
+
+  email_address_1:
+    csv_header: "Email"
+
+  email_address_2:
+    csv_header: "E-mail 2"
+
+  email_address_3:
+    csv_header: "E-mail 3"
+
+  email_address_4:
+    csv_header: "E-mail 4"
+
+  email_confirms:
+    csv_header: "Email Confirm"
+    type_caster:
+      output_type: boolean
+      true_values: ["YES"]
+
+  non_delivery_info_1:
+    csv_header: "Non-dev. Info"
+
+  non_delivery_info_2:
+    csv_header: "Non-dev. Info 2"
