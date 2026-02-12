@@ -121,6 +121,7 @@
   gateway: default
 - name: '"dataphile_catalog"."bronze"."addresses"'
   columns:
+    client_code: TEXT
     account_number: TEXT
     sequence_number: TEXT
     is_structured: TEXT
@@ -173,7 +174,6 @@
     email_address_3: TEXT
     email_address_4: TEXT
     email_confirms: TEXT
-    client_code: TEXT
     Address Lines: TEXT
     Confirm Copies.1: TEXT
     Fax Contract: TEXT
@@ -338,7 +338,6 @@
   gateway: default
 - name: '"dataphile_catalog"."bronze"."crs_records"'
   columns:
-    client_code: TEXT
     associated_party_sequence_number: TEXT
     sequence_number: TEXT
     certification_status: TEXT
@@ -351,6 +350,7 @@
     completion_date: TEXT
     Last Dt : TEXT
     Last User : TEXT
+    client_code: TEXT
     Last Time : TEXT
     __source_file: TEXT
     __ingested_at: TIMESTAMPTZ
@@ -460,23 +460,23 @@
     manual_price: TEXT
     reduced_margin_eligible: TEXT
     trades_options: TEXT
-    Approved: TEXT
     Category.1: TEXT
-    Commission Rate: TEXT
     Family: TEXT
     Fee: TEXT
     fund_class: TEXT
     Fund Link ID: TEXT
     Fund Series : TEXT
+    product: TEXT
+    Type: TEXT
+    registered_doc: TEXT
+    Restricted: TEXT
+    Risk Classification: TEXT
+    Approved: TEXT
+    Commission Rate: TEXT
     Negotiated Fee : TEXT
     Negotiated Trailer : TEXT
     Parent: TEXT
-    product: TEXT
-    registered_doc: TEXT
     Tax Structure: TEXT
-    Type: TEXT
-    Restricted: TEXT
-    Risk Classification: TEXT
     Mgn Code: TEXT
     RRSP Eligible: TEXT
     __source_file: TEXT
@@ -541,6 +541,14 @@
     IA Gross Commission: TEXT
     IA Net Commission: TEXT
     SEC Fee: TEXT
+    Last Dt: TEXT
+    Last Time: TEXT
+    Last User: TEXT
+    Other Tax: TEXT
+    Other Tax Type: TEXT
+    Prefig Commission: TEXT
+    Print State: TEXT
+    Hold Mail (Contract): TEXT
     __source_file: TEXT
     __ingested_at: TIMESTAMPTZ
     __data_snapshot_date: DATE

@@ -20,7 +20,7 @@ DUCKLAKE_STAGING_DIR = DUCKLAKE_DATA_DIR / "staging"
 STATE_DB_PATH = DUCKLAKE_DATA_DIR / "state.duckdb"
 DUCK_DB_ATTACH_SQL = f"ATTACH '{DUCKLAKE_CATALOG_DB_PATH}' AS {DUCKLAKE_CATALOG_NAME} (TYPE DUCKLAKE, DATA_PATH '{DUCKLAKE_STORAGE_DIR}');"
 
-RAW_DATA_DIR = PROJECT_ROOT_DIR / "raw_data" if AT_HOME else Path("\\\\LVAN-FTP1\\default_rpts\\openview")
+RAW_DATA_DIR = PROJECT_ROOT_DIR / "raw_data" # if AT_HOME else Path("\\\\LVAN-FTP1\\default_rpts\\openview")
 CONFIG_BASE_DIRECTORY_PATH = PROJECT_ROOT_DIR / "src"/ "etl" / "configs" / "dataphile"
 LOG_FOLDER = PROJECT_ROOT_DIR / "logs"
 

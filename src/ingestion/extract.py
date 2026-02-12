@@ -118,8 +118,8 @@ class FastCSVExtractor:
         unique_phys_headers = self._rename_duplicate_column_headers(raw_headers)
 
         # 3. Map to DB Schema & Validate
-        final_headers = []
-        found_db_cols = set()
+        final_headers: list[str] = []
+        found_db_cols: set[str] = set()
 
         for phys_header in unique_phys_headers:
             if phys_header in self._header_map:
@@ -133,7 +133,7 @@ class FastCSVExtractor:
                 final_headers.append(phys_header)
 
         # 4. Check Required Columns
-        missing_required = []
+        missing_required: list[str] = []
         for db_col, col_spec in self.spec.columns.items():
             if col_spec.required and db_col not in found_db_cols:
                 missing_required.append(db_col)
@@ -162,7 +162,7 @@ class FastCSVExtractor:
                 new_header.append(column)
         return new_header
 
-    def _stream_cleaned_lines(self, file_path: Path) -> Generator[bytes, None, None]:
+    def _stream_cleaned_lines(self, file_path: Path, expected_number_of_columns: int) -> Generator[bytes, None, None]:
         """
         Yields CLEANED lines as raw bytes (Latin-1 safe).
         """
@@ -171,18 +171,64 @@ class FastCSVExtractor:
         delimiter_b = self.spec.source.delimiter.encode(encoding)
         
         complex_delimiter_b = quote_char_b + delimiter_b + quote_char_b
-        q_len = len(quote_char_b)
 
         with open(file_path, 'rb') as f:
-            next(f) # Skip header
+            _ = f.readline() # Skip header, we already processed it for mapping and validation
 
-            for line in f:
-                line = line.rstrip(b'\r\n')
-                if not line:
-                    continue
+            buffer = b""
+
+            def normalize(parts: list[bytes]) -> bytes:
+                if parts and parts[0].startswith(quote_char_b):
+                    parts[0] = parts[0][1:]
+                if parts and parts[-1].endswith(quote_char_b):
+                    parts[-1] = parts[-1][:-1]
+
+                return self.INTERNAL_DELIMITER_BYTE.join(parts) + b'\n'
+            
+            for physical in f:
+                # Strip line terminator before buffering, so it can't end up inside a field
+                line = physical.rstrip(b'\r\n')
+
+                buffer += line
+                if not buffer:
+                    buffer = b""
+                    continue  # Skip empty lines
                 
-                # Slicing and Replacing bytes is extremely fast
-                yield line[q_len:-q_len].replace(complex_delimiter_b, self.INTERNAL_DELIMITER_BYTE) + b'\n'
+                parts = buffer.split(complex_delimiter_b)
+
+                if len(parts) < expected_number_of_columns:
+                    logger.debug(f"Line has fewer columns than header after splitting by complex delimiter, buffering for next line.\n"
+                                 f"Line: {buffer}\n"
+                                 f"Expected Columns: {expected_number_of_columns}, Found: {len(parts)}")
+                    continue  # Line is not complete yet, read more
+
+                if len(parts) == expected_number_of_columns:
+                    yield normalize(parts)
+                    buffer = b""
+                    continue
+
+                raise CSVExtractionError(
+                    f"Line has more columns than header after splitting by complex delimiter.\n"
+                    f"Line: {buffer}\n"
+                    f"Expected Columns: {expected_number_of_columns}, Found: {len(parts)}"
+                )
+            # Optional: Flush trailing buffer if it ends cleanly
+            candidate = buffer.rstrip(b'\r\n')
+            if candidate:
+                logger.debug(f"End of file reached, processing trailing buffer: {candidate}")  # Debug: Show trailing buffer processing
+                parts = candidate.split(complex_delimiter_b)
+                if len(parts) == expected_number_of_columns:
+                    logger.debug(f"Trailing line has expected number of columns, yielding normalized line.\n"
+                                 f"Line: {candidate}\n"
+                                 f"Expected Columns: {expected_number_of_columns}, Found: {len(parts)}")
+                    yield normalize(parts)
+                elif len(parts) != 0:
+                    raise CSVExtractionError(
+                        f"Trailing line has more columns than header after splitting by complex delimiter.\n"
+                        f"Line: {candidate}\n"
+                        f"Expected Columns: {expected_number_of_columns}, Found: {len(parts)}"
+                    )
+
 
     def convert_to_parquet(self, file_path: Path, output_path: Path, system_cols: dict[str, Any]) -> int:
         """
@@ -217,7 +263,7 @@ class FastCSVExtractor:
         )
 
         try:
-            gen = self._stream_cleaned_lines(file_path)
+            gen = self._stream_cleaned_lines(file_path, expected_number_of_columns=len(mapped_header_names))
             stream_wrapper = GeneratorStream(gen)
             
             table = pv.read_csv(
