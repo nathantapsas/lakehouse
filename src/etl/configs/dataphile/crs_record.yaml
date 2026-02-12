@@ -1,4 +1,4 @@
-name: crs_record
+name: crs_records
 
 loading_strategy: snapshot
 

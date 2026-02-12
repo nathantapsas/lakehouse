@@ -1,5 +1,5 @@
 
-name: exchange_rate
+name: exchange_rates
 
 loading_strategy: snapshot
 

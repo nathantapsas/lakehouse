@@ -1,0 +1,94 @@
+name: transactions
+
+loading_strategy: incremental
+
+source:
+  file_path_glob_pattern: "DD_transaction_table_*.txt"
+  delimiter: "\t"
+  encoding: "latin-1"
+  quoting: 1
+  quote_char: '"'
+
+columns:
+  account_number:
+    csv_header: "Acct Number (Trans)"
+
+  cusip:
+    csv_header: "Cusip/Security (Trans)"
+  
+  reference_number:
+    csv_header: "Ref Number (Trans)"
+  
+  sequencer:
+    csv_header: "Sequencer"
+
+  time_sequencer:
+    csv_header: "Time Seq"
+
+  transaction_code:
+    csv_header: "Transaction Code"
+
+  ia_code:
+    csv_header: "IA (Trans)"
+
+  process_date:
+    csv_header: "Process Date (Trans)"
+
+  settlement_date:
+    csv_header: "Settlement Date (Trans)"
+
+  trade_date:
+    csv_header: "Trade Date (Trans)"
+
+  # created_date:
+  #   csv_header: "Created Date (Trans)"
+
+  description:
+    csv_header: "Description (Trans)"
+
+  currency:
+    csv_header: "Funds (Trans)"
+
+  cash_amount:
+    csv_header: "Amount (Trans)"
+
+  cost:
+    csv_header: "Transaction Cost"
+
+  exchange_rate:
+    csv_header: "Exchange Rate (Trans)"
+
+  int_value:
+    csv_header: "Int Val"
+
+  quantity:
+    csv_header: "Qty (Trans)"
+
+  last_time:
+    csv_header: ["Last Time (Trans)", "Lst Time"]
+
+  last_user:
+    csv_header: ["Last User (Trans)", "Last User"]
+
+  statement_code:
+    csv_header: "On Statement"
+
+  item_number:
+    csv_header: "Open Item Number"
+
+  sort:
+    csv_header: "Sort"
+
+  transaction_cancelled:
+    csv_header: "Transaction Cancelled"
+
+  unofficial_transaction:
+    csv_header: "Unofficial Transaction"
+
+
+
+
+
+
+
+  

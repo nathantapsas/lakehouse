@@ -1,5 +1,5 @@
 
-name: account_fee_data
+name: accounts_fee_data
 
 loading_strategy: snapshot
 

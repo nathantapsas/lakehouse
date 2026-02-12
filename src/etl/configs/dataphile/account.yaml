@@ -1,5 +1,5 @@
 
-name: account
+name: accounts
 
 loading_strategy: snapshot
 
@@ -46,20 +46,20 @@ columns:
   short_name:
     csv_header: "Short Name (Account)"
 
-  trades_okay:
+  is_allowed_to_trade:
     csv_header: "Trades OK"
     type_caster:
       output_type: boolean
     
   # 2 digit date
-  open_date:
+  opened_date:
     csv_header: "Open Date (Account)"
     type_caster:
       output_type: date
       interpret_mode: prefer_past
 
   # 2 digit date
-  close_date:
+  closed_date:
     csv_header: "Close Date (Account)"
     type_caster:
       output_type: date
@@ -85,7 +85,7 @@ columns:
   account_type:
     csv_header: "Account Type"
 
-  portfolio_type:
+  portfolio_type_code:
     csv_header: "Portfolio Type"
 
   class_code:
@@ -96,13 +96,13 @@ columns:
     type_caster:
       output_type: boolean
 
-  commission_type:
+  commission_type_code:
     csv_header: "Type of Commission"
 
-  credit_int:
+  credit_interest_code:
     csv_header: "Credit Int"
 
-  debit_int:
+  debit_interest_code:
     csv_header: "Debit Int"
 
   is_discretionary:
@@ -117,7 +117,7 @@ columns:
       output_type: boolean
       true_values: ["YES"]
   
-  option_approval:
+  option_approval_level_code:
     csv_header: "Option Approval"
 
   consolidation_level:
@@ -128,37 +128,37 @@ columns:
   currency:
     csv_header: "Funds (Account)"
 
-  market_value:
+  market_value_amount:
     csv_header: "Market Value (Account)"
     type_caster:
       output_type: decimal
       negative_suffix: "CR"
   
-  equity:
+  equity_amount:
     csv_header: "Equity/RTS (Account)"
     type_caster:
       output_type: decimal
       negative_prefix: "-"
   
-  loan_value:
+  loan_value_amount:
     csv_header: "Loan Value (Account)"
     type_caster:
       output_type: decimal
       negative_suffix: "CR"
 
-  buying_power:
+  buying_power_amount:
     csv_header: "Buy Pwr/RTM (Account)"
     type_caster:
       output_type: decimal
       negative_suffix: "CR"
 
-  settle_date_balance:
+  settlement_date_cash_balance:
     csv_header: "S/D Balance (Account)"
     type_caster:
       output_type: decimal
       positive_suffix: "CR"
 
-  trade_date_balance:
+  trade_date_cash_balance:
     csv_header: "T/D Balance (Account)"
     type_caster:
       output_type: decimal
@@ -195,26 +195,37 @@ columns:
   #     interpret_mode: prefer_past
   
   # # 2 digit date
-  # last_interest_date:
-  #   csv_header: "Last Interest"
-  #   type_caster:
-  #     output_type: date
-  #     interpret_mode: prefer_past
+  last_interest_date:
+    csv_header: "last Interest"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+  
+  # 2 digit date
+  last_roi_date:
+    csv_header: "Last ROI Date"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
   
   # # 2 digit date
-  # last_roi_date:
-  #   csv_header: "Last ROI Date"
-  #   type_caster:
-  #     output_type: date
-  #     interpret_mode: prefer_past
+  last_statement_date:
+    csv_header: "Last Statement"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
   
-  # # 2 digit date
-  # last_statement_date:
-  #   csv_header: "Last Statement"
-  #   type_caster:
-  #     output_type: date
-  #     interpret_mode: prefer_past
-  
+  last_seg_date:
+    csv_header: "Last Seg Dt"
+    type_caster:
+      output_type: date
+      interpret_mode: prefer_past
+    
+  check_credit:
+    csv_header: "Check Credit"
+    type_caster:
+      output_type: boolean
+      true_values: ["YES"]
   
 
 

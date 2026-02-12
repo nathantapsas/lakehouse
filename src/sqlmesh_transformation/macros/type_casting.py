@@ -38,9 +38,19 @@ def clean_account_number(
     on_null: str = "preserve",
     null_default: str | None = None,
 ) -> str:
-    expr = f"CAST(TRIM(REPLACE({value}, '-', '')) AS VARCHAR)"
+    expr = f"CAST(UPPER(TRIM(REPLACE({value}, '-', ''))) AS VARCHAR)"
     return _apply_null_policy(value, expr, on_null=on_null, null_default=null_default, field_name="Account number")
 
+@macro()
+def clean_cusip(
+    evaluator: MacroEvaluator,
+    value: str,
+    *,
+    on_null: str = "preserve",
+    null_default: str | None = None,
+) -> str:
+    expr = f"CAST(UPPER(TRIM({value})) AS VARCHAR)"
+    return _apply_null_policy(value, expr, on_null=on_null, null_default=null_default, field_name="CUSIP")
 
 @macro()
 def clean_currency_code(
@@ -65,6 +75,26 @@ def clean_currency_code(
         END
     """
     return _apply_null_policy(value, expr, on_null=on_null, null_default=null_default, field_name="Currency code")
+
+@macro()
+def clean_status(
+    evaluator: MacroEvaluator,
+    value: str,
+    *,
+    on_null: str = "preserve",
+    null_default: str | None = None,
+) -> str:
+    expr = f"""
+        CASE
+            WHEN UPPER(TRIM({value})) = 'A' THEN 'ACTIVE'
+            WHEN UPPER(TRIM({value})) = 'C' THEN 'CLOSED'
+            WHEN UPPER(TRIM({value})) = 'P' THEN 'PROSPECTIVE'
+            WHEN UPPER(TRIM({value})) = 'D' THEN 'DELETED'
+
+            ELSE error('Unrecognized status value: ' || {value})
+        END
+    """
+    return _apply_null_policy(value, expr, on_null=on_null, null_default=null_default, field_name="Status")
 
 
 @macro()

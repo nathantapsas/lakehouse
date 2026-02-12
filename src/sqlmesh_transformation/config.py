@@ -22,7 +22,7 @@ config = Config(
     disable_anonymized_analytics=True,
     model_defaults=ModelDefaultsConfig(
         dialect="duckdb",
-        start="2026-02-01",
+        start="2026-01-28",
         cron="@daily"
     ),
     cache_dir=f"{str(PACKAGE_CACHE_DIR)}/.sqlmesh",

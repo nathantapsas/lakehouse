@@ -1,5 +1,5 @@
 
-name: contract
+name: trades
 
 loading_strategy: incremental
 

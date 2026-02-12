@@ -1,17 +1,16 @@
 MODEL (
-  name silver_stg_dataphile.kyc_information_snapshot,
+  name silver_dataphile.kyc_information_snapshot,
   kind INCREMENTAL_BY_TIME_RANGE (
-    time_column __data_snapshot_date,
+    time_column @{sys_col_data_snapshot_date},
     batch_size 1,
   ),
-  grain (client_code, __data_snapshot_date),
-  depends_on (silver_stg_dataphile.client_snapshot),  -- Required for the foreign key audit
+  depends_on (silver_dataphile.clients_snapshot),  -- Required for the foreign key audit
   audits (
     assert_foreign_key_same_day (
-      parent_model := silver_stg_dataphile.client_snapshot,
+      parent_model := silver_dataphile.clients_snapshot,
       mappings := [(client_code, client_code)],
-      child_time_column := '__data_snapshot_date',
-      parent_time_column := '__data_snapshot_date',
+      child_time_column := @{sys_col_data_snapshot_date},
+      parent_time_column := @{sys_col_data_snapshot_date},
       blocking := false
     )
   )
@@ -27,25 +26,17 @@ WITH transformed AS (
     -- @cast_to_numeric(income) AS income,
     -- @cast_to_numeric(net_worth) AS net_worth,
     @cast_to_numeric(fixed_assets) AS fixed_assets,
-    __ingested_at,
-    __data_snapshot_date
+    @{sys_col_ingested_at},
+    @{sys_col_data_snapshot_date}
 
   FROM bronze.kyc_information
 ),
 
 deduplicated AS (
-  SELECT
-    *,
-    ROW_NUMBER() OVER (
-      PARTITION BY (client_code, __data_snapshot_date) 
-      ORDER BY __ingested_at DESC
-    ) AS __rn
-  FROM transformed
+  @deduplicate(
+    transformed,
+    partition_by := (client_code, @{sys_col_data_snapshot_date}),
+    order_by := ["@{sys_col_ingested_at} DESC"]
+  )
 )
-
-SELECT
-  *
-  EXCEPT (__rn)
-
-FROM deduplicated
-WHERE __rn = 1
+SELECT * FROM deduplicated;

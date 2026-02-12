@@ -1,5 +1,5 @@
 
-name: client
+name: clients
 
 loading_strategy: snapshot
 
@@ -31,7 +31,7 @@ columns:
   household_id:
     csv_header: "House ID"
 
-  status:
+  status_code:
     csv_header: "Status (Client)"
   
   is_dormant:
@@ -40,7 +40,7 @@ columns:
       output_type: boolean
       true_values: ["YES"]
 
-  recipient_type:
+  recipient_type_code:
     csv_header: "Recipient Type"
     
   first_name:
@@ -49,7 +49,7 @@ columns:
   last_name:
     csv_header: "Last Name (Client)"
 
-  branch:
+  branch_code:
     csv_header: "Branch"
 
   open_date:
@@ -88,7 +88,7 @@ columns:
       output_type: date
       interpret_mode: prefer_past
 
-  employee:
+  employee_code:
     csv_header: "Employee"
 
   sin:

@@ -1,29 +1,29 @@
-- name: '"dataphile_catalog"."bronze"."account"'
+- name: '"dataphile_catalog"."bronze"."accounts"'
   columns:
     account_number: TEXT
     status: TEXT
-    close_date: TEXT
+    closed_date: TEXT
     short_name: TEXT
     ia_code: TEXT
     account_type: TEXT
     sub_type: TEXT
     currency: TEXT
-    portfolio_type: TEXT
+    portfolio_type_code: TEXT
     minimum_commission_check: TEXT
-    commission_type: TEXT
-    credit_int: TEXT
-    debit_int: TEXT
+    commission_type_code: TEXT
+    credit_interest_code: TEXT
+    debit_interest_code: TEXT
     is_discretionary: TEXT
-    option_approval: TEXT
-    trades_okay: TEXT
+    option_approval_level_code: TEXT
+    is_allowed_to_trade: TEXT
     class_code: TEXT
     residence_code: TEXT
-    settle_date_balance: TEXT
-    trade_date_balance: TEXT
-    market_value: TEXT
-    equity: TEXT
-    loan_value: TEXT
-    buying_power: TEXT
+    settlement_date_cash_balance: TEXT
+    trade_date_cash_balance: TEXT
+    market_value_amount: TEXT
+    equity_amount: TEXT
+    loan_value_amount: TEXT
+    buying_power_amount: TEXT
     consolidation_level: TEXT
     crm2_inception_date: TEXT
     inception_date_override: TEXT
@@ -36,16 +36,16 @@
     Last Date: TEXT
     Last Time: TEXT
     Last User: TEXT
-    open_date: TEXT
+    opened_date: TEXT
     Asset Charge: TEXT
-    last Interest: TEXT
+    last_interest_date: TEXT
     Approved By (Account): TEXT
     DCS CUID: TEXT
-    Last ROI Date: TEXT
+    last_roi_date: TEXT
     DCS Unit Code: TEXT
-    Last Seg Dt: TEXT
-    Check Credit: TEXT
-    Last Statement: TEXT
+    last_seg_date: TEXT
+    check_credit: TEXT
+    last_statement_date: TEXT
     Commission Amount: TEXT
     last_trade_date: TEXT
     Cost On Statements?: TEXT
@@ -118,27 +118,180 @@
     __source_file: TEXT
     __ingested_at: TIMESTAMPTZ
     __data_snapshot_date: DATE
-    KYC Objective Description: TEXT
-    Deceased holder Date of Death: TEXT
-    Deceased Holder Name: TEXT
-    Deceased Holder SIN: TEXT
-    Reporting Holder Birthdate: TEXT
-    Reporting Holder Name: TEXT
-    Reporting Holder SIN: TEXT
-    TFSA CRA Open Year: TEXT
-    TSFA Non-Res Date: TEXT
   gateway: default
-- name: '"dataphile_catalog"."bronze"."client"'
+- name: '"dataphile_catalog"."bronze"."addresses"'
+  columns:
+    account_number: TEXT
+    sequence_number: TEXT
+    is_structured: TEXT
+    is_civic: TEXT
+    Address type: TEXT
+    line_1: TEXT
+    line_2: TEXT
+    line_3: TEXT
+    line_4: TEXT
+    line_5: TEXT
+    line_6: TEXT
+    line_7: TEXT
+    line_8: TEXT
+    unit_type: TEXT
+    unit_number: TEXT
+    civic_number: TEXT
+    street: TEXT
+    street_type: TEXT
+    direction: TEXT
+    city: TEXT
+    province: TEXT
+    postal_code: TEXT
+    country: TEXT
+    mail_mode: TEXT
+    mail_box: TEXT
+    mail_id: TEXT
+    mail_station: TEXT
+    station_name: TEXT
+    station_type: TEXT
+    non_delivery_info_1: TEXT
+    non_delivery_info_2: TEXT
+    send_statement: TEXT
+    confirm_copies: TEXT
+    internal_confirm_copies: TEXT
+    statement_copies: TEXT
+    hold_statement: TEXT
+    cell_phone: TEXT
+    home_phone: TEXT
+    work_phone: TEXT
+    fax: TEXT
+    other_phone_1: TEXT
+    other_phone_2: TEXT
+    other_phone_3: TEXT
+    other_phone_4: TEXT
+    electronic_confirm_flag: TEXT
+    electronic_statement_flag: TEXT
+    electronic_performance_flag: TEXT
+    email_address_1: TEXT
+    email_address_2: TEXT
+    email_address_3: TEXT
+    email_address_4: TEXT
+    email_confirms: TEXT
+    client_code: TEXT
+    Address Lines: TEXT
+    Confirm Copies.1: TEXT
+    Fax Contract: TEXT
+    FAX Queue: TEXT
+    Hold Contract: TEXT
+    Hold Mail Date: TEXT
+    Hold Mail Expiry Date: TEXT
+    Language: TEXT
+    Last Date: TEXT
+    Last Time: TEXT
+    Last User: TEXT
+    Mail Code 1: TEXT
+    Mail Code 2: TEXT
+    Mail Code 3: TEXT
+    Mail Code 4: TEXT
+    Print Stream: TEXT
+    __source_file: TEXT
+    __ingested_at: TIMESTAMPTZ
+    __data_snapshot_date: DATE
+  gateway: default
+- name: '"dataphile_catalog"."bronze"."associated_parties"'
+  columns:
+    sequence_number: TEXT
+    title: TEXT
+    address_number: TEXT
+    first_name: TEXT
+    last_name: TEXT
+    citizenship: TEXT
+    residence_code: TEXT
+    recipient_code: TEXT
+    uci: TEXT
+    uci_percentage: TEXT
+    birth_date: TEXT
+    sin: TEXT
+    us_taxpayer_id_type: TEXT
+    ssn: TEXT
+    foreign_taxpayer_id: TEXT
+    w9_on_file: TEXT
+    w9_date_received: TEXT
+    limitation_of_benefits: TEXT
+    cra_id_details: TEXT
+    cra_treaty: TEXT
+    identification_type_received: TEXT
+    fifty_percent_us_person: TEXT
+    type_of_intermediary: TEXT
+    renounced_us_citizenship: TEXT
+    crs_holder_type: TEXT
+    fatca_certification_status: TEXT
+    beneficial_owner_id: TEXT
+    holder_sub_type: TEXT
+    holder_type: TEXT
+    is_snowbird: TEXT
+    transfer_funds_to_us: TEXT
+    w8_ben_date_received: TEXT
+    w8_ben_required: TEXT
+    w8_exp_received: TEXT
+    country_of_birth: TEXT
+    w8_imy_on_file: TEXT
+    w8_imy_identification_type_received: TEXT
+    w8_imy_date_received: TEXT
+    verification_id: TEXT
+    alternate_identification_type: TEXT
+    backup_withholding: TEXT
+    date_identification_received: TEXT
+    exempt_from_reporting: TEXT
+    exempt_from_withholding: TEXT
+    how_id_expiry_date: TEXT
+    certification_by: TEXT
+    completion_date: TEXT
+    confidentiality_waiver: TEXT
+    cra_dividend_nrt_rate: TEXT
+    cra_trust_nrt_rate: TEXT
+    employer_name: TEXT
+    employer_address: TEXT
+    employer_type: TEXT
+    occupation: TEXT
+    employment_years: TEXT
+    net_worth: TEXT
+    fixed_assets: TEXT
+    liquid_assets: TEXT
+    income: TEXT
+    incorporation_number: TEXT
+    investment_knowledge: TEXT
+    sex: TEXT
+    marital_status: TEXT
+    number_of_dependents: TEXT
+    nrt_document_type: TEXT
+    nrt_document_date: TEXT
+    date_deleted: TEXT
+    identification_received: TEXT
+    lei: TEXT
+    registration_number: TEXT
+    record_status: TEXT
+    Hold PADs Posting?: TEXT
+    Last Date: TEXT
+    Last Time: TEXT
+    Last User: TEXT
+    LOPR ID: TEXT
+    Misc text field: TEXT
+    MX Short Code: TEXT
+    Other Auth: TEXT
+    Second TIN Notfication?: TEXT
+    client_code: TEXT
+    __source_file: TEXT
+    __ingested_at: TIMESTAMPTZ
+    __data_snapshot_date: DATE
+  gateway: default
+- name: '"dataphile_catalog"."bronze"."clients"'
   columns:
     client_code: TEXT
     client_id: TEXT
-    status: TEXT
+    status_code: TEXT
     ia_code: TEXT
-    recipient_type: TEXT
+    recipient_type_code: TEXT
     first_name: TEXT
     last_name: TEXT
     residence_code: TEXT
-    employee: TEXT
+    employee_code: TEXT
     monitor_code: TEXT
     citizenship: TEXT
     is_us_person: TEXT
@@ -155,7 +308,7 @@
     household_id: TEXT
     verification_id: TEXT
     consolidate: TEXT
-    branch: TEXT
+    branch_code: TEXT
     open_date: TEXT
     close_date: TEXT
     is_dormant: TEXT
@@ -183,10 +336,28 @@
     __ingested_at: TIMESTAMPTZ
     __data_snapshot_date: DATE
   gateway: default
-- name: '"dataphile_catalog"."bronze"."kyc_information"'
+- name: '"dataphile_catalog"."bronze"."crs_records"'
   columns:
     client_code: TEXT
-    Client ID: TEXT
+    associated_party_sequence_number: TEXT
+    sequence_number: TEXT
+    certification_status: TEXT
+    citizenship: TEXT
+    tax_jurisdiction: TEXT
+    foreign_taxpayer_id: TEXT
+    reason_code: TEXT
+    reason_notes: TEXT
+    certified_by: TEXT
+    completion_date: TEXT
+    Last Dt : TEXT
+    Last User : TEXT
+    Last Time : TEXT
+    __source_file: TEXT
+    __ingested_at: TIMESTAMPTZ
+    __data_snapshot_date: DATE
+  gateway: default
+- name: '"dataphile_catalog"."bronze"."kyc_information"'
+  columns:
     sex: TEXT
     date_met: TEXT
     employer_name: TEXT
@@ -214,11 +385,194 @@
     fixed_assets: TEXT
     liquid_assets: TEXT
     income: TEXT
-    __source_file: TEXT
-    __ingested_at: TIMESTAMPTZ
-    __data_snapshot_date: DATE
+    client_code: TEXT
     Bank Ref: TEXT
     Last Dt: TEXT
     Last User: TEXT
     Lead Type: TEXT
+    __source_file: TEXT
+    __ingested_at: TIMESTAMPTZ
+    __data_snapshot_date: DATE
+  gateway: default
+- name: '"dataphile_catalog"."bronze"."positions"'
+  columns:
+    account_number: TEXT
+    currency: TEXT
+    cusip: TEXT
+    under_cusip: TEXT
+    current_quantity: TEXT
+    safekeeping_quantity: TEXT
+    segregated_quantity: TEXT
+    cost: TEXT
+    client_name_quantity: TEXT
+    memo_quantity: TEXT
+    pending_quantity: TEXT
+    loan_value_amount: TEXT
+    market_value_amount: TEXT
+    memo_cost: TEXT
+    cost_status: TEXT
+    cost_status_asof_date: TEXT
+    memo_only: TEXT
+    __source_file: TEXT
+    __ingested_at: TIMESTAMPTZ
+    __data_snapshot_date: DATE
+  gateway: default
+- name: '"dataphile_catalog"."bronze"."securities"'
+  columns:
+    cusip: TEXT
+    market: TEXT
+    status: TEXT
+    security_class: TEXT
+    security_name: TEXT
+    isin: TEXT
+    currency: TEXT
+    trades_ok: TEXT
+    call_put: TEXT
+    primary_symbol: TEXT
+    under_cusip: TEXT
+    under_symbol: TEXT
+    code: TEXT
+    strike_price: TEXT
+    expiry_date: TEXT
+    incorporation_country: TEXT
+    us_eci: TEXT
+    convertible: TEXT
+    price_status: TEXT
+    price_source: TEXT
+    price_factor: TEXT
+    ask_price: TEXT
+    bid_price: TEXT
+    last_trade_price: TEXT
+    portfolio_class: TEXT
+    comment: TEXT
+    gics_sub_industry: TEXT
+    category: TEXT
+    cds_eligible: TEXT
+    cds_status: TEXT
+    cds_subtype: TEXT
+    decimals: TEXT
+    loan_value_long_1: TEXT
+    loan_value_long_2: TEXT
+    loan_value_long_3: TEXT
+    loan_value_short_1: TEXT
+    loan_value_short_2: TEXT
+    loan_value_short_3: TEXT
+    manual_price: TEXT
+    reduced_margin_eligible: TEXT
+    trades_options: TEXT
+    Approved: TEXT
+    Category.1: TEXT
+    Commission Rate: TEXT
+    Family: TEXT
+    Fee: TEXT
+    fund_class: TEXT
+    Fund Link ID: TEXT
+    Fund Series : TEXT
+    Negotiated Fee : TEXT
+    Negotiated Trailer : TEXT
+    Parent: TEXT
+    product: TEXT
+    registered_doc: TEXT
+    Tax Structure: TEXT
+    Type: TEXT
+    Restricted: TEXT
+    Risk Classification: TEXT
+    Mgn Code: TEXT
+    RRSP Eligible: TEXT
+    __source_file: TEXT
+    __ingested_at: TIMESTAMPTZ
+    __data_snapshot_date: DATE
+  gateway: default
+- name: '"dataphile_catalog"."bronze"."trades"'
+  columns:
+    Processed?: TEXT
+    trade_number: TEXT
+    client_side: TEXT
+    process_date: TEXT
+    trade_date: TEXT
+    settlement_date: TEXT
+    ia_code: TEXT
+    account_number: TEXT
+    other_side_account_number: TEXT
+    reference_number: TEXT
+    market: TEXT
+    principal_trade: TEXT
+    action: TEXT
+    bucket_code: TEXT
+    cusip: TEXT
+    quantity: TEXT
+    fill_quantity_1: TEXT
+    fill_quantity_2: TEXT
+    fill_quantity_3: TEXT
+    fill_quantity_4: TEXT
+    fill_quantity_5: TEXT
+    currency: TEXT
+    fill_price_1: TEXT
+    fill_price_2: TEXT
+    fill_price_3: TEXT
+    fill_price_4: TEXT
+    fill_price_5: TEXT
+    net_amount: TEXT
+    exchange_rate: TEXT
+    gross_amount: TEXT
+    accrued_interest: TEXT
+    exchange_amount: TEXT
+    trailers: TEXT
+    kp_trailers: TEXT
+    full_commission: TEXT
+    commission_basis: TEXT
+    basic_commission: TEXT
+    commission: TEXT
+    commission_cents: TEXT
+    cancelled: TEXT
+    cancel: TEXT
+    cancel_date: TEXT
+    cancel_number: TEXT
+    inventory_transfer_price: TEXT
+    notes: TEXT
+    entered_by: TEXT
+    order_date: TEXT
+    order_number: TEXT
+    Option Trade Type: TEXT
+    No Min Commission: TEXT
+    NY Tax (Contract): TEXT
+    IA Commission FX: TEXT
+    IA Commission Net FX: TEXT
+    IA Gross Commission: TEXT
+    IA Net Commission: TEXT
+    SEC Fee: TEXT
+    __source_file: TEXT
+    __ingested_at: TIMESTAMPTZ
+    __data_snapshot_date: DATE
+  gateway: default
+- name: '"dataphile_catalog"."bronze"."transactions"'
+  columns:
+    account_number: TEXT
+    process_date: TEXT
+    cash_amount: TEXT
+    Last Dt: TEXT
+    cusip: TEXT
+    description: TEXT
+    exchange_rate: TEXT
+    currency: TEXT
+    ia_code: TEXT
+    int_value: TEXT
+    last_time: TEXT
+    last_user: TEXT
+    statement_code: TEXT
+    item_number: TEXT
+    quantity: TEXT
+    reference_number: TEXT
+    sequencer: TEXT
+    settlement_date: TEXT
+    sort: TEXT
+    time_sequencer: TEXT
+    trade_date: TEXT
+    transaction_cancelled: TEXT
+    cost: TEXT
+    unofficial_transaction: TEXT
+    transaction_code: TEXT
+    __source_file: TEXT
+    __ingested_at: TIMESTAMPTZ
+    __data_snapshot_date: DATE
   gateway: default
