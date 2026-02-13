@@ -15,12 +15,28 @@ WITH transformed AS (
     @clean_status(status_code)                                                                AS status,
     ia_code::TEXT                                                                             AS ia_code,
     @cast_to_integer(recipient_type_code)                                                     AS recipient_type_code,
+    CASE
+      WHEN recipient_type_code = 0 THEN 'Other'
+      WHEN recipient_type_code = 1 THEN 'Individual'
+      WHEN recipient_type_code = 2 THEN 'Joint'
+      WHEN recipient_type_code = 3 THEN 'Corporate'
+      WHEN recipient_type_code = 4 THEN 'Association/Trust'
+      WHEN recipient_type_code = 5 THEN 'Government'
+      WHEN recipient_type_code = 6 THEN 'Charity'
+      ELSE ERROR(printf('Unexpected recipient type code: %s', recipient_type_code))
+    END                                                                                       AS recipient_type,
 
     first_name::TEXT                                                                          AS first_name,
     last_name::TEXT                                                                           AS last_name,
 
     residence_code::TEXT                                                                      AS residence_code,
     employee_code::TEXT                                                                       AS employee_code,
+    CASE
+      WHEN employee_code = 'N' THEN 'Non-Professional'
+      WHEN employee_code = 'Y' THEN 'Employee'
+      WHEN employee_code = 'P' THEN 'Non-Employee Professional'
+      ELSE ERROR(printf('Unexpected employee code: %s', employee_code))
+    END                                                                                       AS is_employee,
 
     monitor_code::TEXT                                                                        AS monitor_code,
     citizenship::TEXT                                                                         AS citizenship,
@@ -38,6 +54,14 @@ WITH transformed AS (
     @cast_to_date(spouse_birth_date, format := '%m/%d/%Y')                                    AS spouse_birth_date,
 
     @cast_to_integer(nrt_code)                                                                AS nrt_code,
+    CASE
+      WHEN nrt_code = 0 THEN 'Resident'
+      WHEN nrt_code = 1 THEN 'Non-Resident'
+      WHEN nrt_code = 2 THEN 'Non-Resident Exempt'
+      WHEN nrt_code = 3 THEN 'Additional'
+      WHEN nrt_code = 4 THEN 'Unknown'
+      ELSE ERROR(printf('Unexpected NRT code: %s', nrt_code))
+    END                                                                                       AS nrt,
 
     @cast_to_integer(household_id)                                                            AS household_id,
 
