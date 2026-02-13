@@ -330,28 +330,8 @@
     Client Flex Field 3: TEXT
     Client Flex Field 4: TEXT
     Client Flex Field 5: TEXT
-    Consent To Share : TEXT
     Client Sub Type: TEXT
-    __source_file: TEXT
-    __ingested_at: TIMESTAMPTZ
-    __data_snapshot_date: DATE
-  gateway: default
-- name: '"dataphile_catalog"."bronze"."crs_records"'
-  columns:
-    associated_party_sequence_number: TEXT
-    sequence_number: TEXT
-    certification_status: TEXT
-    citizenship: TEXT
-    tax_jurisdiction: TEXT
-    foreign_taxpayer_id: TEXT
-    reason_code: TEXT
-    reason_notes: TEXT
-    certified_by: TEXT
-    completion_date: TEXT
-    Last Dt : TEXT
-    Last User : TEXT
-    client_code: TEXT
-    Last Time : TEXT
+    Consent To Share : TEXT
     __source_file: TEXT
     __ingested_at: TIMESTAMPTZ
     __data_snapshot_date: DATE

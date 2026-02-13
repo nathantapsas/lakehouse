@@ -1,5 +1,4 @@
 from logging.config import dictConfig
-from pathlib import Path
 
 from src.ingestion.domain import RunContext
 from src.ingestion.bundle_layout import BundleLayout

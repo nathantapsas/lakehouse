@@ -13,7 +13,8 @@ from core.settings import (
     DUCKLAKE_CATALOG_NAME, 
     STATE_DB_PATH, 
     PACKAGE_CACHE_DIR, 
-    SYSTEM_COL_DATA_SNAPSHOT_DATE
+    SYSTEM_COL_DATA_SNAPSHOT_DATE,
+    SYSTEM_COL_SOURCE_FILE
 )
 
 
@@ -30,7 +31,8 @@ config = Config(
         "default": GatewayConfig(
             variables={
                 "sys_col_data_snapshot_date": SYSTEM_COL_DATA_SNAPSHOT_DATE,
-                "sys_col_ingested_at": SYSTEM_COL_INGESTED_AT
+                "sys_col_ingested_at": SYSTEM_COL_INGESTED_AT,
+                "sys_col_source_file": SYSTEM_COL_SOURCE_FILE
             },
             connection=DuckDBConnectionConfig(
                 catalogs= { 

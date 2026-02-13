@@ -119,11 +119,7 @@ CROSS JOIN LATERAL (
             END,
             a.account_number_suffix
         ),
-        printf('Account number suffix "%s" is not valid for "%s" accounts with currency "%s".', 
-               coalesce(a.account_number_suffix, '<null>'), 
-               coalesce(a.account_type, '<null>'), 
-               coalesce(a.currency, '<null>')
-        )
+        printf('Account number suffix "%s" is not valid for %s %s accounts.', coalesce(a.account_number_suffix, '<null>'), a.currency, a.account_type)
     ),
     (
         'SUFFIX_002',
@@ -152,7 +148,7 @@ CROSS JOIN LATERAL (
                 a.account_number_suffix -- The value to look for:
             )
         ),
-        printf('Account number suffix "%s" is not valid "%s" accounts with currency "%s".', coalesce(a.account_number_suffix, '<null>'), coalesce(a.sub_type, '<null>'), coalesce(a.currency, '<null>') )
+        printf('Account number suffix "%s" is not valid for %s %s accounts.', coalesce(a.account_number_suffix, '<null>'), a.currency, a.sub_type)
     )
 
 ) AS r(rule_id, severity, is_violation, message)

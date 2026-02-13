@@ -103,13 +103,33 @@ WITH transformed AS (
 
 
     @{sys_col_ingested_at},
+    @{sys_col_source_file},
     @{sys_col_data_snapshot_date}
   FROM bronze.accounts
 ),
 
+scd_hash_added AS (
+  SELECT
+    *,
+    md5(
+      array_to_string(
+        list_transform(
+          [UNPACK(COLUMNS(* EXCLUDE (
+            @{sys_col_data_snapshot_date},
+            @{sys_col_source_file},
+            @{sys_col_ingested_at}
+          ))::VARCHAR)],
+          x -> coalesce(x, '_sqlmesh_surrogate_key_null_')
+        ),
+        '|'
+      )
+    ) AS scd_hash
+  FROM transformed
+),
+
 deduplicated AS (
   @deduplicate(
-    transformed,
+    scd_hash_added,
     partition_by := (account_number, @{sys_col_data_snapshot_date}),
     order_by := ["@{sys_col_ingested_at} DESC"]
   )

@@ -1,8 +1,12 @@
 MODEL (
   name silver_dataphile.clients_snapshot,
-  kind INCREMENTAL_BY_TIME_RANGE (
-    time_column @{sys_col_data_snapshot_date},
+  kind SCD_TYPE_2_BY_COLUMN (
+    -- time_column @{sys_col_data_snapshot_date},
+    unique_key client_code,
+    columns scd_hash,
+    updated_at_name @{sys_col_data_snapshot_date},
     batch_size 1,
+    disable_restatement false,
   ),
 );
 
@@ -78,6 +82,7 @@ WITH transformed AS (
     @{sys_col_ingested_at},
     @{sys_col_data_snapshot_date}
   FROM bronze.clients
+  WHERE @{sys_col_data_snapshot_date} BETWEEN @start_ds AND @end_ds
 ),
 
 deduplicated AS (
@@ -86,5 +91,21 @@ deduplicated AS (
     partition_by := (client_code, @{sys_col_data_snapshot_date}),
     order_by := ["@{sys_col_ingested_at} DESC"]
   )
+),
+
+scd_hash_added AS (
+  SELECT
+    *,
+    md5(
+      array_to_string(
+        list_transform(
+          [UNPACK(COLUMNS(* EXCLUDE (@{sys_col_data_snapshot_date}, @{sys_col_ingested_at}))::VARCHAR)],
+          x -> coalesce(x, '_sqlmesh_surrogate_key_null_')
+        ),
+        '|'
+      )
+    ) AS scd_hash
+  FROM deduplicated
 )
-SELECT * FROM deduplicated
+
+SELECT * FROM scd_hash_added;
