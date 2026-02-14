@@ -1,0 +1,51 @@
+
+name: restrictions
+
+loading_strategy: snapshot
+
+source:
+  file_path_glob_pattern: "DD_restriction_table_*.txt"
+  delimiter: "\t"
+  encoding: "latin-1"
+  quoting: 1
+  quote_char: '"'
+
+columns:
+  client_code:
+    csv_header: "Client Code"
+
+  account_number:
+    csv_header: "Account"
+  
+  restriction_code:
+    csv_header: "Restriction Code"
+  
+  description:
+    csv_header: "Description"
+  
+  security_class_code:
+    csv_header: "Class"
+  
+  buy_effect_code:
+    csv_header: "Buy Effect"
+  
+  sell_effect_code:
+    csv_header: "Sell Effect"
+  
+  credit_effect_code:
+    csv_header: "Credit Effect"
+  
+  debit_effect_code:
+    csv_header: "Debit Effect"
+  
+  switch_effect_code:
+    csv_header: "Switch Effect"
+  
+  transfer_in_effect_code:
+    csv_header: "Transfer In Effect"
+  
+  transfer_out_effect_code:
+    csv_header: "Transfer Out Effect"
+  
+  last_date:
+    csv_header: "Last Dt"

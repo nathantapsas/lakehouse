@@ -10,15 +10,6 @@ source:
   quoting: 1
   quote_char: '"'
 
-
-# table_schema:
-  # business_key: [account_number]
-
-  # foreign_keys:
-  #   - local_columns: [account_number]
-  #     remote_table: account
-  #     remote_columns: [account_number]
-
 columns:
   account_number:
     csv_header: ["Account Number", "Account"]

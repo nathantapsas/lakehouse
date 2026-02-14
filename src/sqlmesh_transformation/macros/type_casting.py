@@ -38,8 +38,26 @@ def clean_account_number(
     on_null: str = "preserve",
     null_default: str | None = None,
 ) -> str:
-    expr = f"CAST(UPPER(TRIM(REPLACE({value}, '-', ''))) AS VARCHAR)"
-    return _apply_null_policy(value, expr, on_null=on_null, null_default=null_default, field_name="Account number")
+    """
+    Cleans an account number by removing dashes, trimming whitespace, and converting to uppercase. The cleaned value is cast to VARCHAR.
+     Invalid (non-null) values will not error in this function since we are just applying string transformations, 
+     but downstream logic may error if there are unexpected formats (e.g. if account numbers are not in the expected format).
+
+        NULL handling is controlled by `on_null` / `null_default`.
+        on_null:    
+            - "preserve": NULL inputs result in NULL output
+            - "default": NULL inputs result in `null_default` output (must be provided if on_null="default")
+            - "error": NULL inputs result in an error with a message indicating the field name that cannot be NULL.
+    """
+    cleaned = f"UPPER(TRIM(REPLACE({value}, '-', '')))"
+    expr = f"CAST(NULLIF({cleaned}, '') AS VARCHAR)"
+    return _apply_null_policy(
+        f"NULLIF(TRIM(REPLACE({value}, '-', '')), '')",
+        expr, 
+        on_null=on_null, 
+        null_default=null_default, 
+        field_name="Account number"
+    )
 
 @macro()
 def clean_cusip(
@@ -49,6 +67,17 @@ def clean_cusip(
     on_null: str = "preserve",
     null_default: str | None = None,
 ) -> str:
+    """
+    Cleans a CUSIP by trimming whitespace and converting to uppercase. The cleaned value is cast to VARCHAR.
+     Invalid (non-null) values will not error in this function since we are just applying string transformations, 
+     but downstream logic may error if there are unexpected formats (e.g. if CUSIPs are not in the expected format).
+    
+        NULL handling is controlled by `on_null` / `null_default`.
+        on_null:    
+            - "preserve": NULL inputs result in NULL output
+            - "default": NULL inputs result in `null_default` output (must be provided if on_null="default")
+            - "error": NULL inputs result in an error with a message indicating the field name that cannot be NULL.
+    """
     expr = f"CAST(UPPER(TRIM({value})) AS VARCHAR)"
     return _apply_null_policy(value, expr, on_null=on_null, null_default=null_default, field_name="CUSIP")
 
