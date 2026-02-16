@@ -3,6 +3,7 @@ MODEL (
   kind INCREMENTAL_BY_TIME_RANGE (
     time_column @{sys_col_data_snapshot_date},
     batch_size 1,
+    on_destructive_change 'warn',
   ),
 );
 

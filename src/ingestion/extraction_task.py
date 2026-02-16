@@ -113,6 +113,7 @@ def execute_extraction_task(
         manifest: dict[str, Any] = {
             "source_name": spec.name,
             "raw_file": str(raw_path),
+            "data_snapshot_date": snapshot_date.isoformat() if snapshot_date else None,
             "status": "COMPLETED",
             "metrics": {"total_rows": int(total_rows)},
             "artifacts": [{"relpath": artifact_relpath, "type": "data", "count": int(total_rows)}],
@@ -122,7 +123,11 @@ def execute_extraction_task(
         # Atomic promote tmp -> final
         bundle_layout.finalize_tmp_bundle(tmp_bundle_dir=tmp_bundle_dir, final_bundle_dir=final_bundle_dir)
 
-        return ExtractionResult(extracted_bundle_path=final_bundle_dir, rows_extracted_total=int(total_rows))
+        return ExtractionResult(
+            extracted_bundle_path=final_bundle_dir, 
+            rows_extracted_total=int(total_rows),
+            data_snapshot_date=snapshot_date
+        )
 
     except Exception:
         logger.exception("Extraction failed for %s", raw_path)

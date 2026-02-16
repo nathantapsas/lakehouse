@@ -281,7 +281,6 @@ def cast_to_boolean(
     *,
     true_tokens: tuple[str, ...] = ("T", "TRUE", "Y", "YES"),
     false_tokens: tuple[str, ...] = ("F", "FALSE", "N", "NO"),
-    null_tokens: tuple[str, ...] = ("", "NULL", "N/A", "NA"),
     on_null: str = "preserve",
     null_default: str | None = None,
 ) -> str:
@@ -300,23 +299,14 @@ def cast_to_boolean(
 
     true_list = ", ".join(f"'{t.upper()}'" for t in true_tokens)
     false_list = ", ".join(f"'{t.upper()}'" for t in false_tokens)
-    null_list = ", ".join(f"'{t.upper()}'" for t in null_tokens)
 
     if on_null not in ("preserve", "default", "error"):
         raise ValueError('on_null must be one of: "preserve", "default", "error"')
     if on_null == "default" and null_default is None:
         raise ValueError('null_default must be provided when on_null="default"')
 
-    if on_null == "preserve":
-        null_token_branch = "NULL"
-    elif on_null == "default":
-        null_token_branch = null_default
-    else:
-        null_token_branch = "error('Boolean value cannot be NULL')"
-
     expr = f"""
         CASE
-            WHEN {norm} IN ({null_list}) THEN {null_token_branch}
             WHEN {norm} IN ({true_list}) THEN TRUE
             WHEN {norm} IN ({false_list}) THEN FALSE
             ELSE error('Unrecognized boolean token: ' || {value})

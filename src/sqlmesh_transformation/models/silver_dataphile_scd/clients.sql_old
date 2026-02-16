@@ -1,13 +1,12 @@
 MODEL (
-  name silver_dataphile.clients_snapshot,
+  name silver_dataphile.clients,
   kind SCD_TYPE_2_BY_COLUMN (
-    -- time_column @{sys_col_data_snapshot_date},
     unique_key client_code,
     columns scd_hash,
     updated_at_name @{sys_col_data_snapshot_date},
+    invalidate_hard_deletes true,
     batch_size 1,
-    disable_restatement false,
-  ),
+  )
 );
 
 WITH transformed AS (
@@ -40,7 +39,7 @@ WITH transformed AS (
       WHEN employee_code = 'Y' THEN 'Employee'
       WHEN employee_code = 'P' THEN 'Non-Employee Professional'
       ELSE ERROR(printf('Unexpected employee code: %s', employee_code))
-    END                                                                                       AS is_employee,
+    END                                                                                       AS employee,
 
     monitor_code::TEXT                                                                        AS monitor_code,
     citizenship::TEXT                                                                         AS citizenship,

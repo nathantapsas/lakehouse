@@ -1,16 +1,11 @@
 name: securities
 
-loading_strategy: incremental
-
 source:
   file_path_glob_pattern: "DD_security_table_*.txt"
   delimiter: "\t"
   encoding: "latin"
   quoting: 1
   quote_char: '"'
-
-# table_schema:
-  # business_key: [cusip]
 
 columns:
   cusip:
@@ -19,7 +14,7 @@ columns:
       - "Cusip/Security (Trans)"
       - "Cusip"
 
-  security_class:
+  security_class_code:
     csv_header: "Security Class"
 
   isin:
@@ -37,11 +32,8 @@ columns:
   primary_symbol:
     csv_header: "Primary Symbol"
 
-  trades_ok:
+  is_able_to_trade:
     csv_header: "Trades OK"
-    type_caster:
-      output_type: boolean
-      true_values: ["YES"]
 
   currency:
     csv_header: "Funds"
@@ -60,38 +52,24 @@ columns:
 
   loan_value_long_1:
     csv_header: "Firm LV-Long 1"
-    type_caster:
-      output_type: decimal
 
   loan_value_long_2:
     csv_header: "Firm LV-Long 2"
-    type_caster:
-      output_type: decimal
 
   loan_value_long_3:
     csv_header: "Firm LV-Long 3"
-    type_caster:
-      output_type: decimal
 
   loan_value_short_1:
     csv_header: "Firm LV-Short 1"
-    type_caster:
-      output_type: decimal
 
   loan_value_short_2:
     csv_header: "Firm LV-Short 2"
-    type_caster:
-      output_type: decimal
 
   loan_value_short_3:
     csv_header: "Firm LV-Short 3"
-    type_caster:
-      output_type: decimal
 
   decimals:
     csv_header: "Decimals"
-    type_caster:
-      output_type: integer
 
   price_source:
     csv_header: "Price Source"
@@ -99,41 +77,32 @@ columns:
   price_factor:
     csv_header: "Price Factor"
 
-  price_status:
+  price_status_code:
     csv_header: "Price Status"
 
-  manual_price:
+  has_manual_price:
     csv_header: "Manual Price"
-    type_caster:
-      output_type: boolean
-      true_values: ["YES"]
 
-  incorporation_country:
+  incorporation_country_code:
     csv_header: "Incorporation Country"
 
-  us_eci:
+  is_us_eci:
     csv_header: "US ECI\u00a0"
-    type_caster:
-      output_type: boolean
 
   portfolio_class:
     csv_header: "Portfolio Class"
 
-  call_put:
+  call_put_indicator:
     csv_header: "Call/Put"
 
-  under_symbol:
+  underlying_symbol:
     csv_header: "Undr Symbol"
 
-  under_cusip:
+  underlying_cusip:
     csv_header: "Under CUSIP"
 
   expiry_date:
     csv_header: "Expiry Date"
-    type_caster:
-      output_type: date
-      interpret_mode: pivot
-      pivot_year_short: 22
 
   code:
     csv_header: "Security Code"
@@ -144,25 +113,17 @@ columns:
   category:
     csv_header: "Category"
 
-  reduced_margin_eligible:
+  has_reduced_margin:
     csv_header: "Reduced Margin"
-    type_caster:
-      output_type: boolean
 
   trades_options:
     csv_header: "Trades Options"
-    type_caster:
-      output_type: boolean
 
-  convertible:
+  is_convertible:
     csv_header: "Convertible"
-    type_caster:
-      output_type: boolean
 
-  cds_eligible:
+  is_cds_eligible:
     csv_header: "CDS Elig?"
-    type_caster:
-      output_type: boolean
 
   cds_status:
     csv_header: "CDS Status"

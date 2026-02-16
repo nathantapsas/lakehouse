@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import logging
 import re
 from contextlib import contextmanager
@@ -70,6 +68,66 @@ class IngestionLedgerStore:
     # ----------------------------
     # Public API
     # ----------------------------
+    def start_run(
+        self,
+        *,
+        run_id: str,
+        expected_sources: set[str],
+        discovered_sources: set[str],
+        missing_files_by_date: dict[str, list[str]],
+        duplicate_files_by_date: dict[str, list[str]],
+    ) -> None:
+        conn = self._require_connection()
+        now = utc_now_naive()
+
+        conn.execute(
+            f"""
+            INSERT INTO {self._ops('ingestion_runs')}
+            (run_id, started_at_utc, status, expected_sources_json, found_sources_json, missing_sources_json,
+             number_of_files_discovered)
+
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            [
+                run_id,
+                now,
+                "RUNNING",
+                expected_sources,
+                discovered_sources,
+                missing_files_by_date,
+                len(discovered_sources),
+            ],
+        )
+    def finalize_run(
+        self,
+        *,
+        run_id: str,
+        status: str,
+        found_sources: set[str],
+        missing_sources: set[str],
+        number_of_processed_files: int,
+        number_of_files_committed: int,
+        error_message: str | None = None,
+    ) -> None:
+        conn = self._require_connection()
+        now = utc_now_naive()
+
+        conn.execute(
+            f"""
+            UPDATE {self._ops('ingestion_runs')}
+            SET finished_at_utc = ?, status = ?, error_message = ?, number_of_files_processed = ?, number_of_files_committed = ?
+            WHERE run_id = ?
+            """,
+            [
+                now,
+                status,
+                error_message,
+                number_of_processed_files,
+                number_of_files_committed,
+                run_id,
+            ],
+        )
+
     def get_completed_file_keys(self) -> set[FileKey]:
         conn = self._require_connection()
         rows = conn.execute(
@@ -120,6 +178,7 @@ class IngestionLedgerStore:
                     d.file_key.raw_file_metadata_signature,
                     d.file_key.spec_hash,
                     str(d.raw_file_path),
+                    r.data_snapshot_date,
                     int(r.rows_extracted_total),
                     str(run_id),
                     now,
@@ -130,8 +189,8 @@ class IngestionLedgerStore:
             tx.executemany(
                 f"""
                 INSERT INTO {self._ops('loaded_files')}
-                (source_name, raw_file_metadata_signature, spec_hash, raw_file_path, rows_loaded, run_id, loaded_at_utc)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                (source_name, raw_file_metadata_signature, spec_hash, raw_file_path, data_snapshot_date, rows_loaded, run_id, loaded_at_utc)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 ledger_rows,
             )
@@ -169,6 +228,26 @@ class IngestionLedgerStore:
         conn = self._require_connection()
         conn.execute(f"CREATE SCHEMA IF NOT EXISTS {self._catalog}.ops")
 
+        # conn.execute(
+        #     f"""
+        #     CREATE TABLE IF NOT EXISTS {self._ops('ingestion_runs')} (
+        #         run_id                      VARCHAR PRIMARY KEY,
+        #         started_at_utc              TIMESTAMP NOT NULL,
+        #         finished_at_utc             TIMESTAMP,
+        #         status                      VARCHAR NOT NULL,
+        #         expected_sources_json       JSON NOT NULL,
+        #         found_sources_json          JSON NOT NULL,
+        #         missing_sources_json        JSON NOT NULL,
+
+        #         number_of_files_discovered  INT NOT NULL DEFAULT 0,
+        #         number_of_files_processed   INT NOT NULL DEFAULT 0,
+        #         number_of_files_committed   INT NOT NULL DEFAULT 0,
+        #         error_message               VARCHAR
+        #     )
+
+        #     """
+        # )
+
         conn.execute(
             f"""
             CREATE TABLE IF NOT EXISTS {self._ops('loaded_files')} (
@@ -176,6 +255,7 @@ class IngestionLedgerStore:
               raw_file_metadata_signature VARCHAR NOT NULL,
               spec_hash                   VARCHAR NOT NULL,
               raw_file_path               VARCHAR NOT NULL,
+              data_snapshot_date          DATE,
               rows_loaded                 BIGINT  NOT NULL,
               run_id                      VARCHAR NOT NULL,
               loaded_at_utc               TIMESTAMP NOT NULL

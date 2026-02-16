@@ -32,6 +32,28 @@ WITH transformed AS (
     @cast_to_integer(sequence_number)                                                             AS sequence_number,
     @clean_account_number(account_number)                                                         AS account_number,
 
+    @cast_to_boolean(is_structured)                                                               AS is_structured,
+    @cast_to_boolean(is_civic)                                                                    AS is_civic,
+
+    unit_number::TEXT                                                                             AS unit_number,
+    unit_type::TEXT                                                                               AS unit_type,
+    civic_number::TEXT                                                                            AS civic_number,
+    street::TEXT                                                                                  AS street,
+    street_type::TEXT                                                                             AS street_type,
+    direction::TEXT                                                                               AS direction,
+    city::TEXT                                                                                    AS city,
+    province::TEXT                                                                                AS province,
+    postal_code::TEXT                                                                             AS postal_code,
+    country::TEXT                                                                                 AS country,
+
+    mail_mode::TEXT                                                                               AS mail_mode,
+    mail_box::TEXT                                                                                AS mail_box,
+    mail_id::TEXT                                                                                 AS mail_id,
+    mail_station::TEXT                                                                            AS mail_station,
+    station_name::TEXT                                                                            AS station_name,
+    station_type::TEXT                                                                            AS station_type,
+
+
     line_1::TEXT                                                                                  AS line_1,
     line_2::TEXT                                                                                  AS line_2,
     line_3::TEXT                                                                                  AS line_3,

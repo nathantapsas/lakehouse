@@ -6,6 +6,7 @@ import json
 import hashlib
 from pathlib import Path
 import pstats
+import re
 from typing import Any, Callable
 from datetime import datetime, timezone
 
@@ -80,3 +81,15 @@ def deterministic_serializer(obj: Any) -> Any:
         return sorted(list(obj), key=str)
     # Fallback for dates/other types (though mode='json' above handles most)
     return str(obj)
+
+
+def parse_data_snapshot_date_from_filename(filename: str, filename_date_regex: str, filename_date_format: str) -> datetime | None:
+    if not filename_date_regex or not filename_date_format:
+        return None
+    
+    match = re.search(filename_date_regex, filename)
+    if not match:
+        logger.warning(f"Filename '{filename}' does not match the provided regex '{filename_date_regex}'. Cannot parse data snapshot date.")
+        return None
+    
+    return datetime.strptime(match.group(1), filename_date_format)

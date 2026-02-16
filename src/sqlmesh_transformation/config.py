@@ -23,8 +23,8 @@ config = Config(
     disable_anonymized_analytics=True,
     model_defaults=ModelDefaultsConfig(
         dialect="duckdb",
-        start="2026-01-28",
-        cron="@daily"
+        start="2026-01-27",
+        cron="@daily",
     ),
     cache_dir=f"{str(PACKAGE_CACHE_DIR)}/.sqlmesh",
     gateways={
@@ -50,7 +50,6 @@ config = Config(
             )
         )
     },
-    # before_all=get_udfs(),
     linter=LinterConfig(
         enabled=True,
         rules={"ambiguousorinvalidcolumn", "invalidselectstarexpansion", "noambiguousprojections"}

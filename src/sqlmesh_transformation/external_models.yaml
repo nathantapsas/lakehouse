@@ -423,22 +423,22 @@
     cusip: TEXT
     market: TEXT
     status: TEXT
-    security_class: TEXT
+    security_class_code: TEXT
     security_name: TEXT
     isin: TEXT
     currency: TEXT
-    trades_ok: TEXT
-    call_put: TEXT
+    is_able_to_trade: TEXT
+    call_put_indicator: TEXT
     primary_symbol: TEXT
-    under_cusip: TEXT
-    under_symbol: TEXT
+    underlying_cusip: TEXT
+    underlying_symbol: TEXT
     code: TEXT
     strike_price: TEXT
     expiry_date: TEXT
-    incorporation_country: TEXT
-    us_eci: TEXT
-    convertible: TEXT
-    price_status: TEXT
+    incorporation_country_code: TEXT
+    is_us_eci: TEXT
+    is_convertible: TEXT
+    price_status_code: TEXT
     price_source: TEXT
     price_factor: TEXT
     ask_price: TEXT
@@ -448,7 +448,7 @@
     comment: TEXT
     gics_sub_industry: TEXT
     category: TEXT
-    cds_eligible: TEXT
+    is_cds_eligible: TEXT
     cds_status: TEXT
     cds_subtype: TEXT
     decimals: TEXT
@@ -458,8 +458,8 @@
     loan_value_short_1: TEXT
     loan_value_short_2: TEXT
     loan_value_short_3: TEXT
-    manual_price: TEXT
-    reduced_margin_eligible: TEXT
+    has_manual_price: TEXT
+    has_reduced_margin: TEXT
     trades_options: TEXT
     Category.1: TEXT
     Family: TEXT

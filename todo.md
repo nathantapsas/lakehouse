@@ -10,6 +10,7 @@
 - Implement a clean up / consolidate parquet method, maybe in ledger store, or separate script.
 - Do we need spec hash in manifest table? Should we instead write a script to mark a file for reprocessing?
 
+- Add security added date to openview query
 
 - Some position costs are negative and some positive, how does this make sense?
 - Figure out the business key columns for transaction table

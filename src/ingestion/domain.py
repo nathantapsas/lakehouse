@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, date
 from pathlib import Path
 from typing import Any
 
@@ -41,6 +41,7 @@ class ExtractionResult:
     """Result returned by an extraction worker."""
     extracted_bundle_path: Path
     rows_extracted_total: int
+    data_snapshot_date: date | None = None
 
 
 @dataclass(frozen=True)

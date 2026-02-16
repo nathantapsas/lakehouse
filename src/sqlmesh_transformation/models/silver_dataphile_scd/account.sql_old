@@ -1,17 +1,17 @@
 MODEL (
-  name silver_dataphile.accounts_snapshot,
-  kind INCREMENTAL_BY_TIME_RANGE (
-    time_column @{sys_col_data_snapshot_date},
+  name silver_dataphile.accounts,
+  kind SCD_TYPE_2_BY_COLUMN (
+    unique_key account_number,
+    columns scd_hash,
+    updated_at_name @{sys_col_data_snapshot_date},
+    invalidate_hard_deletes true,
     batch_size 1,
   ),
-  grain (account_number, @{sys_col_data_snapshot_date}),
-  depends_on (silver_dataphile.clients_snapshot), -- Required for the foreign key audit
+  depends_on (silver_dataphile.clients), -- Required for the foreign key audit
   audits (
-    assert_foreign_key_same_day (
-      parent_model := silver_dataphile.clients_snapshot,
+    assert_foreign_key_scd_same_day(
+      parent_model := silver_dataphile.clients,
       mappings := [(client_code, client_code)],
-      child_time_column := @{sys_col_data_snapshot_date},
-      parent_time_column := @{sys_col_data_snapshot_date},
       blocking := false
     )
   )
@@ -106,6 +106,16 @@ WITH transformed AS (
     @{sys_col_source_file},
     @{sys_col_data_snapshot_date}
   FROM bronze.accounts
+  WHERE @{sys_col_data_snapshot_date} BETWEEN @start_ds AND @end_ds
+),
+
+
+deduplicated AS (
+  @deduplicate(
+    transformed,
+    partition_by := (account_number, @{sys_col_data_snapshot_date}),
+    order_by := ["@{sys_col_ingested_at} DESC"]
+  )
 ),
 
 scd_hash_added AS (
@@ -124,14 +134,7 @@ scd_hash_added AS (
         '|'
       )
     ) AS scd_hash
-  FROM transformed
-),
-
-deduplicated AS (
-  @deduplicate(
-    scd_hash_added,
-    partition_by := (account_number, @{sys_col_data_snapshot_date}),
-    order_by := ["@{sys_col_ingested_at} DESC"]
-  )
+  FROM deduplicated
 )
-SELECT * FROM deduplicated;
+
+SELECT * FROM scd_hash_added;
