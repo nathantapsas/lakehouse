@@ -49,7 +49,7 @@ transaction_validations AS (
         r.rule_id::TEXT                                                                      AS rule_id,
         r.severity::TEXT                                                                     AS severity,
         'transaction'::TEXT                                                                  AS entity_type,
-        t.reference_number::TEXT                                                             AS entity_id,
+        t.journal_reference_number::TEXT                                                     AS entity_id,
         r.message::TEXT                                                                      AS message
     FROM transactions t
     JOIN accounts a

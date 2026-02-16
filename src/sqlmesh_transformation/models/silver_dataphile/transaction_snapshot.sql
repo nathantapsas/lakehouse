@@ -5,7 +5,7 @@ MODEL (
     batch_size 1,
   ),
   depends_on (
-    silver_dataphile.accounts_snapshot,  -- Required for the foreign key audit
+    silver_dataphile.accounts_snapshot,   -- Required for the foreign key audit
     silver_dataphile.securities_snapshot  -- Required for the foreign key audit
   ), 
   audits (
@@ -61,12 +61,12 @@ deduplicated AS (
   @deduplicate(
     transformed,
     partition_by := (
-      cusip, 
+      process_date, 
       account_number, 
+      reference_number,
+      cusip, 
       sequencer, 
       time_sequencer, 
-      process_date, 
-      reference_number,
       @{sys_col_data_snapshot_date}
     ),
     order_by := ["@{sys_col_ingested_at} DESC"]
