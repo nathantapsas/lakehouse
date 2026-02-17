@@ -1,7 +1,7 @@
 MODEL (
   name silver_dataphile.restrictions_snapshot,
   kind INCREMENTAL_BY_TIME_RANGE (
-    time_column @{sys_col_data_snapshot_date},
+    time_column as_of_date,
     batch_size 1,
   ),
   depends_on (
@@ -12,15 +12,15 @@ MODEL (
     assert_foreign_key_same_day (
       parent_model := silver_dataphile.clients_snapshot,
       mappings := [(client_code, client_code)],
-      child_time_column := @{sys_col_data_snapshot_date},
-      parent_time_column := @{sys_col_data_snapshot_date},
+      child_time_column := as_of_date,
+      parent_time_column := as_of_date,
       blocking := false
     ),
     assert_foreign_key_same_day (
       parent_model := silver_dataphile.accounts_snapshot,
       mappings := [(account_number, account_number)],
-      child_time_column := @{sys_col_data_snapshot_date},
-      parent_time_column := @{sys_col_data_snapshot_date},
+      child_time_column := as_of_date,
+      parent_time_column := as_of_date,
       blocking := false
     )
   ),
@@ -39,7 +39,16 @@ MODEL (
   )
 );
 
-WITH transformed AS (
+WITH src AS (
+  SELECT
+    r.*,
+    m.as_of_date
+  FROM bronze.restrictions r
+  JOIN bronze_meta.dataphile_asof_map m
+    ON r.@{sys_col_data_snapshot_date} = m.@{sys_col_data_snapshot_date}
+),
+
+transformed AS (
   SELECT
     @cast_to_integer(client_code)                                                                 AS client_code,
     @clean_account_number(account_number)                                                         AS account_number,
@@ -58,15 +67,16 @@ WITH transformed AS (
     @clean_effect_code(transfer_out_effect_code)                                                  AS transfer_out_effect,
 
     @{sys_col_ingested_at},
-    @{sys_col_data_snapshot_date}
-  FROM bronze.restrictions
-  WHERE @{sys_col_data_snapshot_date} BETWEEN @start_ds AND @end_ds
+    @{sys_col_data_snapshot_date},
+    as_of_date
+  FROM src
+  WHERE as_of_date BETWEEN @start_ds AND @end_ds
 ),
 
 deduplicated AS (
   @deduplicate(
     transformed,
-    partition_by := (client_code, account_number, security_class_code, restriction_code, @{sys_col_data_snapshot_date}),
+    partition_by := (client_code, account_number, security_class_code, restriction_code, as_of_date),
     order_by := ["@{sys_col_ingested_at} DESC"]
   )
 )

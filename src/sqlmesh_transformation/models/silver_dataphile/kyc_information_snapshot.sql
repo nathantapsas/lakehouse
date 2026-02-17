@@ -1,7 +1,7 @@
 MODEL (
   name silver_dataphile.kyc_information_snapshot,
   kind INCREMENTAL_BY_TIME_RANGE (
-    time_column @{sys_col_data_snapshot_date},
+    time_column as_of_date,
     batch_size 1,
   ),
   depends_on (silver_dataphile.clients_snapshot),  -- Required for the foreign key audit
@@ -9,15 +9,23 @@ MODEL (
     assert_foreign_key_same_day (
       parent_model := silver_dataphile.clients_snapshot,
       mappings := [(client_code, client_code)],
-      child_time_column := @{sys_col_data_snapshot_date},
-      parent_time_column := @{sys_col_data_snapshot_date},
+      child_time_column := as_of_date,
+      parent_time_column := as_of_date,
       blocking := false
     )
   ),
-  allow_partials: true,
 );
 
-WITH transformed AS (
+WITH src AS (
+  SELECT
+    k.*,
+    m.as_of_date
+  FROM bronze.kyc_information k
+  JOIN bronze_meta.dataphile_asof_map m
+    ON k.@{sys_col_data_snapshot_date} = m.@{sys_col_data_snapshot_date}
+),
+
+transformed AS (
   SELECT
     @cast_to_integer(client_code) AS client_code,
 
@@ -28,16 +36,17 @@ WITH transformed AS (
     -- @cast_to_numeric(net_worth) AS net_worth,
     @cast_to_numeric(fixed_assets) AS fixed_assets,
     @{sys_col_ingested_at},
-    @{sys_col_data_snapshot_date}
+    @{sys_col_data_snapshot_date},
+    as_of_date
 
-  FROM bronze.kyc_information
-  WHERE @{sys_col_data_snapshot_date} BETWEEN @start_ds AND @end_ds
+  FROM src
+  WHERE as_of_date BETWEEN @start_ds AND @end_ds
 ),
 
 deduplicated AS (
   @deduplicate(
     transformed,
-    partition_by := (client_code, @{sys_col_data_snapshot_date}),
+    partition_by := (client_code, as_of_date),
     order_by := ["@{sys_col_ingested_at} DESC"]
   )
 )

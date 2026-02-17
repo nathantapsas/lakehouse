@@ -1,7 +1,7 @@
 MODEL (
   name silver_dataphile.transactions_snapshot,
   kind INCREMENTAL_BY_TIME_RANGE (
-    time_column @{sys_col_data_snapshot_date},
+    time_column as_of_date,
     batch_size 1,
   ),
   depends_on (
@@ -12,22 +12,30 @@ MODEL (
     assert_foreign_key_same_day (
       parent_model := silver_dataphile.accounts_snapshot,
       mappings := [(account_number, account_number)],
-      child_time_column := @{sys_col_data_snapshot_date},
-      parent_time_column := @{sys_col_data_snapshot_date},
+      child_time_column := as_of_date,
+      parent_time_column := as_of_date,
       blocking := false
     ),
     assert_foreign_key_same_day (
       parent_model := silver_dataphile.securities_snapshot,
       mappings := [(cusip, cusip)],
-      child_time_column := @{sys_col_data_snapshot_date},
-      parent_time_column := @{sys_col_data_snapshot_date},
+      child_time_column := as_of_date,
+      parent_time_column := as_of_date,
       blocking := false
     )
-  ),
-  allow_partials: true
+  )
 );
 
-WITH transformed AS (
+WITH src AS (
+  SELECT
+    t.*,
+    m.as_of_date
+  FROM bronze.transactions t
+  JOIN bronze_meta.dataphile_asof_map m
+    ON t.@{sys_col_data_snapshot_date} = m.@{sys_col_data_snapshot_date}
+),
+
+transformed AS (
   SELECT
     @clean_cusip(cusip)                                                                           AS cusip,
     @clean_account_number(account_number)                                                         AS account_number,
@@ -54,14 +62,15 @@ WITH transformed AS (
     @split_part(transaction_code, '-', 2)                                                         AS transaction_code_label,
 
     @{sys_col_ingested_at},
-    @{sys_col_data_snapshot_date}
-  FROM bronze.transactions
+    @{sys_col_data_snapshot_date},
+    as_of_date
+  FROM src
 ),
 
 filtered AS (
   SELECT *
   FROM transformed
-  WHERE @{sys_col_data_snapshot_date} BETWEEN @start_ds AND @end_ds  
+  WHERE as_of_date BETWEEN @start_ds AND @end_ds  
 ),
 
 deduplicated AS (
@@ -75,7 +84,7 @@ deduplicated AS (
       sequencer, 
       time_sequencer, 
     ),
-    order_by := ["@{sys_col_data_snapshot_date} DESC", "@{sys_col_ingested_at} DESC"]
+    order_by := ["as_of_date DESC", "@{sys_col_ingested_at} DESC"]
   )
 )
 SELECT * FROM deduplicated;

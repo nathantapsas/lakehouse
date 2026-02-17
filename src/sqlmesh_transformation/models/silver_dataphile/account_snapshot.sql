@@ -1,7 +1,7 @@
 MODEL (
   name silver_dataphile.accounts_snapshot,
   kind INCREMENTAL_BY_TIME_RANGE (
-    time_column @{sys_col_data_snapshot_date},
+    time_column as_of_date,
     batch_size 1,
   ),
   grain (account_number, @{sys_col_data_snapshot_date}),
@@ -17,7 +17,16 @@ MODEL (
   ),
 );
 
-WITH transformed AS (
+with src as (
+  select
+    a.*,
+    m.as_of_date
+  from bronze.accounts a
+  join bronze_meta.dataphile_asof_map m
+    on a.@{sys_col_data_snapshot_date} = m.@{sys_col_data_snapshot_date}
+),
+
+transformed AS (
   SELECT
     @clean_account_number(account_number)                                                         AS account_number,
     @cast_to_integer(client_code)                                                                 AS client_code,
@@ -105,9 +114,11 @@ WITH transformed AS (
 
     @{sys_col_ingested_at},
     -- @{sys_col_source_file},
+    as_of_date,
     @{sys_col_data_snapshot_date}
-  FROM bronze.accounts
-  WHERE @{sys_col_data_snapshot_date} BETWEEN @start_ds AND @end_ds
+
+  FROM src
+  WHERE as_of_date BETWEEN @start_ds AND @end_ds
 ),
 
 deduplicated AS (

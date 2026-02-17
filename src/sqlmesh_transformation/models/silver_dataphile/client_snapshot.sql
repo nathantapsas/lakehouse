@@ -1,14 +1,22 @@
 MODEL (
   name silver_dataphile.clients_snapshot,
   kind INCREMENTAL_BY_TIME_RANGE (
-    time_column @{sys_col_data_snapshot_date},
+    time_column as_of_date,
     batch_size 1,
     on_destructive_change 'warn',
   ),
-  allow_partials: true,
 );
 
-WITH transformed AS (
+WITH src AS (
+  SELECT
+    c.*,
+    m.as_of_date
+  FROM bronze.clients c
+  JOIN bronze_meta.dataphile_asof_map m
+    ON c.@{sys_col_data_snapshot_date} = m.@{sys_col_data_snapshot_date}
+),
+
+transformed AS (
   SELECT
     @cast_to_integer(client_code)                                                             AS client_code,
     client_id::TEXT                                                                           AS client_id,
@@ -78,15 +86,17 @@ WITH transformed AS (
     @cast_to_boolean(is_dormant)                                                              AS is_dormant,
 
     @{sys_col_ingested_at},
-    @{sys_col_data_snapshot_date}
-  FROM bronze.clients
-  WHERE @{sys_col_data_snapshot_date} BETWEEN @start_ds AND @end_ds
+    @{sys_col_data_snapshot_date},
+    as_of_date
+
+  FROM src
+  WHERE as_of_date BETWEEN @start_ds AND @end_ds
 ),
 
 deduplicated AS (
   @deduplicate(
     transformed,
-    partition_by := (client_code, @{sys_col_data_snapshot_date}),
+    partition_by := (client_code, as_of_date),
     order_by := ["@{sys_col_ingested_at} DESC"]
   )
 )

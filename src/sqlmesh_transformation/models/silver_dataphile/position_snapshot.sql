@@ -1,7 +1,7 @@
 MODEL (
   name silver_dataphile.positions_snapshot,
   kind INCREMENTAL_BY_TIME_RANGE (
-    time_column @{sys_col_data_snapshot_date},
+    time_column as_of_date,
     batch_size 1,
   ),
   depends_on (
@@ -12,22 +12,30 @@ MODEL (
     assert_foreign_key_same_day (
       parent_model := silver_dataphile.accounts_snapshot,
       mappings := [(account_number, account_number)],
-      child_time_column := @{sys_col_data_snapshot_date},
-      parent_time_column := @{sys_col_data_snapshot_date},
+      child_time_column := as_of_date,
+      parent_time_column := as_of_date,
       blocking := false
     ),
     assert_foreign_key_same_day (
       parent_model := silver_dataphile.securities_snapshot,
       mappings := [(cusip, cusip)],
-      child_time_column := @{sys_col_data_snapshot_date},
-      parent_time_column := @{sys_col_data_snapshot_date},
+      child_time_column := as_of_date,
+      parent_time_column := as_of_date,
       blocking := false
     )
   ),
-  allow_partials: true,
 );
 
-WITH transformed AS (
+WITH src AS (
+  SELECT
+    p.*,
+    m.as_of_date
+  FROM bronze.positions p
+  JOIN bronze_meta.dataphile_asof_map m
+    ON p.@{sys_col_data_snapshot_date} = m.@{sys_col_data_snapshot_date}
+),
+
+transformed AS (
   SELECT
     @clean_account_number(account_number)                                                         AS account_number,
     @clean_cusip(cusip)                                                                           AS cusip,
@@ -43,15 +51,16 @@ WITH transformed AS (
 
 
     @{sys_col_ingested_at},
-    @{sys_col_data_snapshot_date}
-  FROM bronze.positions
-  WHERE @{sys_col_data_snapshot_date} BETWEEN @start_ds AND @end_ds
+    @{sys_col_data_snapshot_date},
+    as_of_date
+  FROM src
+  WHERE as_of_date BETWEEN @start_ds AND @end_ds
 ),
 
 deduplicated AS (
   @deduplicate(
     transformed,
-    partition_by := (account_number, cusip, @{sys_col_data_snapshot_date}),
+    partition_by := (account_number, cusip, as_of_date),
     order_by := ["@{sys_col_ingested_at} DESC"]
   )
 )
