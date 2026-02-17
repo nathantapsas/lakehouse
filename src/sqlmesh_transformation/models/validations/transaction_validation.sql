@@ -10,12 +10,18 @@ WITH latest_data_snapshot_date AS (
     FROM silver_dataphile.transactions_snapshot
 ),
 
+WITH reporting_year_start_date AS (
+    SELECT DATEFROMPARTS(YEAR(CURRENT_DATE) - 1, 12, 31) AS reporting_year_start_date
+),
+
 transactions AS (
     SELECT
         t.*,
     FROM silver_dataphile.transactions_snapshot t
-    JOIN latest_data_snapshot_date l
-        ON t.@{sys_col_data_snapshot_date} = l.data_snapshot_date
+    JOIN reporting_year_start_date r
+        ON t.@{sys_col_data_snapshot_date} > r.reporting_year_start_date
+
+
     -- WHERE 
     --     a.account_number LIKE '0%'              -- Client accounts
     --     AND a.status = 'ACTIVE'                 -- Active accounts

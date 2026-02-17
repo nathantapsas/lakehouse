@@ -30,7 +30,8 @@ MODEL (
       parent_time_column := @{sys_col_data_snapshot_date},
       blocking := false
     )
-  )
+  ),
+  allow_partials: true
 );
 
 WITH transformed AS (
@@ -48,6 +49,7 @@ WITH transformed AS (
     @{sys_col_ingested_at},
     @{sys_col_data_snapshot_date}
   FROM bronze.trades
+  WHERE @{sys_col_data_snapshot_date} BETWEEN @start_ds AND @end_ds
 ),
 
 deduplicated AS (

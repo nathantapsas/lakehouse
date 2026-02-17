@@ -1,6 +1,6 @@
 MODEL (
     name validations.client_data_quality_validations,
-    kind VIEW,
+    kind FULL,
 );
 
 @DEF('coalesce_to_text', (value) -> (COALESCE(value::TEXT, '<null>'))
@@ -66,10 +66,10 @@ associated_parties AS (
 addresses AS (
     SELECT
         ad.*,
-        (NOT ad.is_structured)                                      AS is_freeform,
-        (ad.is_structured AND NOT ad.is_civic)                      AS is_rural,
-        (ad.country = 'CAN')                                        AS is_canadian,
-        (ad.country = 'USA')                                        AS is_us
+        (NOT ad.is_structured)                                                               AS is_freeform,
+        (ad.is_structured AND NOT ad.is_civic)                                               AS is_rural,
+        (ad.country = 'CAN')                                                                 AS is_canadian,
+        (ad.country = 'USA')                                                                 AS is_us
     FROM silver_dataphile.addresses_snapshot ad
     JOIN latest_data_snapshot_date l
         ON ad.@{sys_col_data_snapshot_date} = l.data_snapshot_date
@@ -164,6 +164,7 @@ account_validations AS (
                     WHEN '1_CAD' THEN ['C'] WHEN '1_USD' THEN ['D']                                 -- TYPE '1'
                     WHEN '2_CAD' THEN ['E', 'L'] WHEN '2_USD' THEN ['F', 'M']                       -- TYPE '2'
                     WHEN '3_CAD' THEN ['G'] WHEN '3_USD' THEN ['H']                                 -- TYPE '3'
+                    WHEN '4_CAD' THEN ['A'] WHEN '4_USD' THEN ['B']                                 -- TYPE '4' 
                     -- If account type is unknown or not in map, return empty list (fail)
                     ELSE []
                 END,
@@ -312,7 +313,7 @@ client_validations AS (
             'NON_ENTITY_001',
             'WARNING',
             ( c.is_not_entity AND c.spouse_name IS NOT NULL AND (c.spouse_sin IS NULL OR c.spouse_birth_date IS NULL) ),
-            'Entity clients should not have spouse information, but found ' ||
+            'Non-entity clients with spouse name should have spouse SIN and spouse birth date, but found ' ||
             concat_ws(
                 ', ',
                 CASE WHEN c.spouse_name IS NOT NULL THEN 'spouse_name: ' || c.spouse_name END,

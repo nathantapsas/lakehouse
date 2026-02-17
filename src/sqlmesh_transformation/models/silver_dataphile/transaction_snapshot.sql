@@ -23,7 +23,8 @@ MODEL (
       parent_time_column := @{sys_col_data_snapshot_date},
       blocking := false
     )
-  )
+  ),
+  allow_partials: true
 );
 
 WITH transformed AS (
@@ -42,12 +43,12 @@ WITH transformed AS (
 
     description::TEXT                                                                             AS description,
 
-    reference_number::TEXT                                                                        AS journal_reference_number,
+    journal_reference_number::TEXT                                                                AS journal_reference_number,
     @cast_to_numeric(quantity, positive_suffix := '-')                                            AS quantity,
     @cast_to_date(settlement_date, format := '%m/%d/%y', prefer_past := False)                    AS settlement_date,
     @cast_to_date(trade_date, format := '%m/%d/%y', prefer_past := False)                         AS trade_date,
     @cast_to_boolean(transaction_cancelled)                                                       AS is_cancelled,
-    @cast_to_numeric(cost, negative_prefix := '-')                                                AS cost,
+    -- @cast_to_numeric(cost, negative_prefix := '-')                                                AS cost,
 
     @split_part(transaction_code, '-', 1)                                                         AS transaction_code,
     @split_part(transaction_code, '-', 2)                                                         AS transaction_code_label,
@@ -57,19 +58,24 @@ WITH transformed AS (
   FROM bronze.transactions
 ),
 
+filtered AS (
+  SELECT *
+  FROM transformed
+  WHERE @{sys_col_data_snapshot_date} BETWEEN @start_ds AND @end_ds  
+),
+
 deduplicated AS (
   @deduplicate(
-    transformed,
+    filtered,
     partition_by := (
       process_date, 
       account_number, 
-      reference_number,
+      journal_reference_number,
       cusip, 
       sequencer, 
       time_sequencer, 
-      @{sys_col_data_snapshot_date}
     ),
-    order_by := ["@{sys_col_ingested_at} DESC"]
+    order_by := ["@{sys_col_data_snapshot_date} DESC", "@{sys_col_ingested_at} DESC"]
   )
 )
 SELECT * FROM deduplicated;

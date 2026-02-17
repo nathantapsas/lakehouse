@@ -16,7 +16,7 @@ columns:
   cusip:
     csv_header: "Cusip/Security (Trans)"
   
-  reference_number:
+  journal_reference_number:
     csv_header: "Ref Number (Trans)"
   
   sequencer:

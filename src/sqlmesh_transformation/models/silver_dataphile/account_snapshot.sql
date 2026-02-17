@@ -14,7 +14,7 @@ MODEL (
       parent_time_column := @{sys_col_data_snapshot_date},
       blocking := false
     )
-  )
+  ),
 );
 
 WITH transformed AS (
@@ -104,9 +104,10 @@ WITH transformed AS (
 
 
     @{sys_col_ingested_at},
-    @{sys_col_source_file},
+    -- @{sys_col_source_file},
     @{sys_col_data_snapshot_date}
   FROM bronze.accounts
+  WHERE @{sys_col_data_snapshot_date} BETWEEN @start_ds AND @end_ds
 ),
 
 deduplicated AS (
