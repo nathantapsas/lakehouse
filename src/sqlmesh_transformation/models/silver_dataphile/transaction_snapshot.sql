@@ -12,14 +12,14 @@ MODEL (
       parent_model := silver_dataphile.accounts_snapshot,
       mappings := [(account_number, account_number)],
       child_time_column := process_date,
-      parent_time_column := __data_as_of_date,
+      parent_time_column := @{sys_col_data_as_of_date},
       blocking := false
     ),
     assert_foreign_key_same_day (
       parent_model := silver_dataphile.securities_snapshot,
       mappings := [(cusip, cusip)],
       child_time_column := process_date,
-      parent_time_column := __data_as_of_date,
+      parent_time_column := @{sys_col_data_as_of_date},
       blocking := false
     )
   )
@@ -52,10 +52,11 @@ WITH transformed AS (
     @split_part(transaction_code, '-', 1)                                                         AS transaction_code,
     @split_part(transaction_code, '-', 2)                                                         AS transaction_code_label,
 
-    @{sys_col_ingested_at}
+    @{sys_col_ingested_at},
+    @{sys_col_data_as_of_date}
 
     FROM bronze.transactions
-    WHERE process_date BETWEEN @start_ds AND @end_ds  
+    WHERE @{sys_col_data_as_of_date} BETWEEN @start_ds AND @end_ds  
 
 ),
 

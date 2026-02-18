@@ -1,7 +1,7 @@
 MODEL (
   name silver_dataphile.positions_snapshot,
   kind INCREMENTAL_BY_TIME_RANGE (
-    time_column __data_as_of_date,
+    time_column @{sys_col_data_as_of_date},
   ),
   depends_on (
     silver_dataphile.accounts_snapshot,  -- Required for the foreign key audit
@@ -11,29 +11,21 @@ MODEL (
     assert_foreign_key_same_day (
       parent_model := silver_dataphile.accounts_snapshot,
       mappings := [(account_number, account_number)],
-      child_time_column := __data_as_of_date,
-      parent_time_column := __data_as_of_date,
+      child_time_column := @{sys_col_data_as_of_date},
+      parent_time_column := @{sys_col_data_as_of_date},
       blocking := false
     ),
     assert_foreign_key_same_day (
       parent_model := silver_dataphile.securities_snapshot,
       mappings := [(cusip, cusip)],
-      child_time_column := __data_as_of_date,
-      parent_time_column := __data_as_of_date,
+      child_time_column := @{sys_col_data_as_of_date},
+      parent_time_column := @{sys_col_data_as_of_date},
       blocking := false
     )
   ),
 );
 
-WITH date_map AS (
-  SELECT
-    @{sys_col_data_snapshot_date},
-    data_as_of_date                                                                               AS __data_as_of_date
-  FROM bronze_meta.dataphile_asof_map
-    WHERE data_as_of_date BETWEEN @start_ds AND @end_ds
-),
-
-transformed AS (
+WITH transformed AS (
   SELECT
     @clean_account_number(account_number)                                                         AS account_number,
     @clean_cusip(cusip)                                                                           AS cusip,
@@ -49,17 +41,16 @@ transformed AS (
 
 
     @{sys_col_ingested_at},
-    __data_as_of_date
+    @{sys_col_data_as_of_date}
 
-  FROM bronze.positions p
-  JOIN date_map d
-    ON p.@{sys_col_data_snapshot_date} = d.@{sys_col_data_snapshot_date}
+  FROM bronze.positions
+  WHERE @{sys_col_data_as_of_date} BETWEEN @start_ds AND @end_ds
 ),
 
 deduplicated AS (
   @deduplicate(
     transformed,
-    partition_by := (account_number, cusip, __data_as_of_date),
+    partition_by := (account_number, cusip, @{sys_col_data_as_of_date}),
     order_by := ["@{sys_col_ingested_at} DESC"]
   )
 )

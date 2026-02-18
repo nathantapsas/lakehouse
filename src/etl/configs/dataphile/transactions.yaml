@@ -3,7 +3,7 @@ name: transactions
 loading_strategy: incremental
 
 partition_by: 
-  - __data_snapshot_date
+  - __data_as_of_date
 
 source:
   file_path_glob_pattern: "DD_transaction_table_*.txt"

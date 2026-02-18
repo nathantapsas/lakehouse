@@ -28,6 +28,7 @@ class DiscoveredFile:
     raw_file_path: Path
     raw_file_size_bytes: int
     raw_file_mtime_utc: datetime  # naive UTC
+    data_as_of_date: date | None = None
 
 
 @dataclass(frozen=True)
@@ -41,7 +42,7 @@ class ExtractionResult:
     """Result returned by an extraction worker."""
     extracted_bundle_path: Path
     rows_extracted_total: int
-    data_snapshot_date: date | None = None
+    data_as_of_date: date | None = None
 
 
 @dataclass(frozen=True)

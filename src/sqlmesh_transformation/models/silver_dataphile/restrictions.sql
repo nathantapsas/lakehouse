@@ -1,7 +1,7 @@
 MODEL (
   name silver_dataphile.restrictions_snapshot,
   kind INCREMENTAL_BY_TIME_RANGE (
-    time_column __data_as_of_date,
+    time_column @{sys_col_data_as_of_date},
   ),
   depends_on (
     silver_dataphile.clients_snapshot,  -- Required for the foreign key audit
@@ -11,15 +11,15 @@ MODEL (
     assert_foreign_key_same_day (
       parent_model := silver_dataphile.clients_snapshot,
       mappings := [(client_code, client_code)],
-      child_time_column := __data_as_of_date,
-      parent_time_column := __data_as_of_date,
+      child_time_column := @{sys_col_data_as_of_date},
+      parent_time_column := @{sys_col_data_as_of_date},
       blocking := false
     ),
     assert_foreign_key_same_day (
       parent_model := silver_dataphile.accounts_snapshot,
       mappings := [(account_number, account_number)],
-      child_time_column := __data_as_of_date,
-      parent_time_column := __data_as_of_date,
+      child_time_column := @{sys_col_data_as_of_date},
+      parent_time_column := @{sys_col_data_as_of_date},
       blocking := false
     )
   ),
@@ -37,15 +37,7 @@ MODEL (
   )
 );
 
-WITH date_map AS (
-  SELECT
-    @{sys_col_data_snapshot_date},
-    data_as_of_date                                                                               AS __data_as_of_date
-  FROM bronze_meta.dataphile_asof_map
-    WHERE data_as_of_date BETWEEN @start_ds AND @end_ds
-),
-
-transformed AS (
+WITH transformed AS (
   SELECT
     @cast_to_integer(client_code)                                                                 AS client_code,
     @clean_account_number(account_number)                                                         AS account_number,
@@ -64,17 +56,16 @@ transformed AS (
     @clean_effect_code(transfer_out_effect_code)                                                  AS transfer_out_effect,
 
     @{sys_col_ingested_at},
-    __data_as_of_date
+    @{sys_col_data_as_of_date}
 
-  FROM bronze.restrictions r
-  JOIN date_map d
-    ON r.@{sys_col_data_snapshot_date} = d.@{sys_col_data_snapshot_date}
+  FROM bronze.restrictions
+  WHERE @{sys_col_data_as_of_date} BETWEEN @start_ds AND @end_ds
 ),
 
 deduplicated AS (
   @deduplicate(
     transformed,
-    partition_by := (client_code, account_number, security_class_code, restriction_code, __data_as_of_date),
+    partition_by := (client_code, account_number, security_class_code, restriction_code, @{sys_col_data_as_of_date}),
     order_by := ["@{sys_col_ingested_at} DESC"]
   )
 )

@@ -11,11 +11,12 @@ from pathlib import Path
 from typing import Protocol, Sequence
 
 from ingestion.bundle_layout import BundleLayout
+from ingestion.business_calendar import BusinessCalendar
 from ingestion.csv_config import CSVIngestSpec
 from ingestion.domain import DiscoveredFile, ExtractionResult, FileKey, LoadTarget, RunContext
 from ingestion.extraction_task import execute_extraction_task
 from ingestion.ledger_store import IngestionLedgerStore
-from ingestion.utils import calculate_spec_hash
+from ingestion.utils import calculate_spec_hash, parse_data_snapshot_date_from_filename
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +32,8 @@ class OrchestrationConfig:
     batch_loading_size: int = 50
     batch_loading_max_latency_seconds: float = 30.0
     idle_sleep_seconds: float = 0.05
+
+    holiday_calendar_file_glob_pattern: str = "DD_holidays_table_*.txt"  
 
 
 class Orchestrator:
@@ -60,6 +63,19 @@ class Orchestrator:
         self.load_planner = load_planner
         self.config = config
         self.data_dir = data_dir
+
+        self.business_calendar = self._initialize_business_calendar()
+    
+    def _initialize_business_calendar(self):
+        holiday_files = list(self.data_dir.glob(self.config.holiday_calendar_file_glob_pattern))
+
+        if not holiday_files:
+            logger.warning("No holiday calendar files found with pattern %s. Business calendar will be empty.", self.config.holiday_calendar_file_glob_pattern)
+            return BusinessCalendar(None)
+        
+        selected_file = sorted(holiday_files)[-1]
+        logger.info("Initializing business calendar with holiday file: %s", selected_file)
+        return BusinessCalendar(selected_file)
 
     def run(self, ctx: RunContext) -> None:
         with self.store as store, ProcessPoolExecutor(max_workers=self.config.max_parallel_extractions) as executor:
@@ -180,9 +196,20 @@ class Orchestrator:
                     if not fnmatch.fnmatch(entry.name, spec.source.file_path_glob_pattern):
                         continue
 
+                    snapshot_date = parse_data_snapshot_date_from_filename(
+                        entry.name, 
+                        spec.source.filename_date_regex,
+                        spec.source.filename_date_format
+                    )
+
+                    data_as_of_date = None
+                    if snapshot_date:
+                        data_as_of_date = self.business_calendar.get_previous_business_day(snapshot_date.date())
+                    
                     stat = entry.stat()
                     mtime = datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc).replace(tzinfo=None)
                     metadata_signature = f"{entry.name}_{stat.st_size}_{stat.st_mtime}"
+
 
                     file_key = FileKey(
                         source_name=spec_name,
@@ -196,6 +223,7 @@ class Orchestrator:
                             raw_file_path=Path(entry.path).absolute(),
                             raw_file_size_bytes=stat.st_size,
                             raw_file_mtime_utc=mtime,
+                            data_as_of_date=data_as_of_date
                         )
                     )
 

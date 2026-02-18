@@ -12,21 +12,21 @@ MODEL (
       parent_model := silver_dataphile.accounts_snapshot,
       mappings := [(account_number, account_number)],
       child_time_column := process_date,
-      parent_time_column := __data_as_of_date,
+      parent_time_column := @{sys_col_data_as_of_date},
       blocking := false
     ),
     assert_foreign_key_same_day (
       parent_model := silver_dataphile.accounts_snapshot,
       mappings := [(other_side_account_number, account_number)],
       child_time_column := process_date,
-      parent_time_column := __data_as_of_date,
+      parent_time_column := @{sys_col_data_as_of_date},
       blocking := false
     ),
     assert_foreign_key_same_day (
       parent_model := silver_dataphile.securities_snapshot,
       mappings := [(cusip, cusip)],
       child_time_column := process_date,
-      parent_time_column := __data_as_of_date,
+      parent_time_column := @{sys_col_data_as_of_date},
       blocking := false
     )
   ),
@@ -45,10 +45,10 @@ WITH transformed AS (
 
 
     @{sys_col_ingested_at},
-    @{sys_col_data_snapshot_date}
+    @{sys_col_data_as_of_date}
 
   FROM bronze.trades
-  WHERE @{sys_col_data_snapshot_date} BETWEEN @start_ds AND @end_ds
+  WHERE process_date BETWEEN @start_ds AND @end_ds
 ),
 
 deduplicated AS (

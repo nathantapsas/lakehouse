@@ -54,61 +54,62 @@
     Delinquent: TEXT
     Delivery Inst: TEXT
     Destination Route: TEXT
+    IA Net %: TEXT
     DTC Additional Party ID: TEXT
     DTC Additional Party Instr 1: TEXT
     DTC Additional Party Instr 2: TEXT
     DTC Agent ID: TEXT
-    IA Net %: TEXT
     DTC Bank Account: TEXT
     DTC Institution ID: TEXT
+    ESIR Number: TEXT
     DTC Participant Num: TEXT
     DTC Party Acct: TEXT
-    Guarantor Account: TEXT
-    Lead Account: TEXT
-    ESIR Number: TEXT
-    Leveraged?: TEXT
-    National Policy 41: TEXT
-    National Policy 41b: TEXT
     Plan Non Res Date: TEXT
     Reason Closed (Account): TEXT
-    National Policy 41c: TEXT
+    Guarantor Account: TEXT
     Participant: TEXT
-    NI54 Change Date: TEXT
-    NI54 E-Mail: TEXT
+    KYC Update Date: TEXT
+    Lead Account: TEXT
     Pension Registration: TEXT
-    NI54 Language: TEXT
+    Leveraged?: TEXT
     Rights: TEXT
-    NI54 Mail: TEXT
+    National Policy 41: TEXT
     RRIF Open Date: TEXT
+    National Policy 41b: TEXT
+    National Policy 41c: TEXT
+    NI54 E-Mail: TEXT
+    NI54 Language: TEXT
+    NI54 Change Date: TEXT
+    NI54 Mail: TEXT
+    Ticket Base: TEXT
     NI54 Objecting: TEXT
+    Trader Code: TEXT
+    Initial Trade Date: TEXT
+    NM Loan Val House 1: TEXT
+    Trustee: TEXT
+    Initiator CUID: TEXT
+    NM Loan Val House 2: TEXT
+    US Clearing Agency: TEXT
+    Institution Code: TEXT
+    NM Loan Val House 3: TEXT
+    Division: TEXT
+    NM Loan Val Reg 1: TEXT
+    NM Loan Val Reg 2: TEXT
+    NM Loan Val Reg 3: TEXT
     NM Loan Val Custom 1: TEXT
     NM Loan Val Custom 2: TEXT
     NM Loan Val Custom 3: TEXT
-    NM Loan Val House 1: TEXT
-    NM Loan Val House 2: TEXT
-    Ticket Base: TEXT
-    NM Loan Val House 3: TEXT
-    Trader Code: TEXT
-    Initial Trade Date: TEXT
-    NM Loan Val Reg 1: TEXT
-    Trustee: TEXT
-    Initiator CUID: TEXT
-    NM Loan Val Reg 2: TEXT
-    US Clearing Agency: TEXT
-    Institution Code: TEXT
-    NM Loan Val Reg 3: TEXT
-    Division: TEXT
-    SSS Account Number: TEXT
-    SSS Department: TEXT
-    'SSS FINS #': TEXT
-    SSS Institution Name: TEXT
     client_code: TEXT
-    SSS Location: TEXT
     NASD Clearing Broker: TEXT
     NASD Executing Broker: TEXT
     NASD Numeric ID: TEXT
+    SSS Account Number: TEXT
+    SSS Department: TEXT
     MF History?: TEXT
     Monthly Statement: TEXT
+    'SSS FINS #': TEXT
+    SSS Institution Name: TEXT
+    SSS Location: TEXT
     Account Flex Field 1: TEXT
     Account Flex Field 2: TEXT
     Account Flex Field 3: TEXT
@@ -116,8 +117,7 @@
     Account Flex Field 5: TEXT
     __source_file: TEXT
     __ingested_at: TIMESTAMPTZ
-    __data_snapshot_date: DATE
-    KYC Update Date: TEXT
+    __data_as_of_date: DATE
   gateway: default
 - name: '"dataphile_catalog"."bronze"."addresses"'
   columns:
@@ -192,7 +192,7 @@
     Print Stream: TEXT
     __source_file: TEXT
     __ingested_at: TIMESTAMPTZ
-    __data_snapshot_date: DATE
+    __data_as_of_date: DATE
   gateway: default
 - name: '"dataphile_catalog"."bronze"."associated_parties"'
   columns:
@@ -279,7 +279,7 @@
     client_code: TEXT
     __source_file: TEXT
     __ingested_at: TIMESTAMPTZ
-    __data_snapshot_date: DATE
+    __data_as_of_date: DATE
   gateway: default
 - name: '"dataphile_catalog"."bronze"."clients"'
   columns:
@@ -334,20 +334,7 @@
     Consent To Share : TEXT
     __source_file: TEXT
     __ingested_at: TIMESTAMPTZ
-    __data_snapshot_date: DATE
-  gateway: default
-- name: '"dataphile_catalog"."bronze"."holidays"'
-  columns:
-    holiday_date: TEXT
-    last_date: TEXT
-    last_user: TEXT
-    last_time: TEXT
-    market_close: TEXT
-    region_code: TEXT
-    type_code: TEXT
-    __source_file: TEXT
-    __ingested_at: TIMESTAMPTZ
-    __data_snapshot_date: DATE
+    __data_as_of_date: DATE
   gateway: default
 - name: '"dataphile_catalog"."bronze"."kyc_information"'
   columns:
@@ -385,7 +372,7 @@
     Lead Type: TEXT
     __source_file: TEXT
     __ingested_at: TIMESTAMPTZ
-    __data_snapshot_date: DATE
+    __data_as_of_date: DATE
   gateway: default
 - name: '"dataphile_catalog"."bronze"."positions"'
   columns:
@@ -408,7 +395,7 @@
     memo_only: TEXT
     __source_file: TEXT
     __ingested_at: TIMESTAMPTZ
-    __data_snapshot_date: DATE
+    __data_as_of_date: DATE
   gateway: default
 - name: '"dataphile_catalog"."bronze"."restrictions"'
   columns:
@@ -429,7 +416,7 @@
     Last User: TEXT
     __source_file: TEXT
     __ingested_at: TIMESTAMPTZ
-    __data_snapshot_date: DATE
+    __data_as_of_date: DATE
   gateway: default
 - name: '"dataphile_catalog"."bronze"."securities"'
   columns:
@@ -495,7 +482,7 @@
     RRSP Eligible: TEXT
     __source_file: TEXT
     __ingested_at: TIMESTAMPTZ
-    __data_snapshot_date: DATE
+    __data_as_of_date: DATE
   gateway: default
 - name: '"dataphile_catalog"."bronze"."trades"'
   columns:
@@ -555,9 +542,17 @@
     IA Gross Commission: TEXT
     IA Net Commission: TEXT
     SEC Fee: TEXT
+    Last Dt: TEXT
+    Last Time: TEXT
+    Last User: TEXT
+    Other Tax: TEXT
+    Other Tax Type: TEXT
+    Prefig Commission: TEXT
+    Print State: TEXT
+    Hold Mail (Contract): TEXT
     __source_file: TEXT
     __ingested_at: TIMESTAMPTZ
-    __data_snapshot_date: DATE
+    __data_as_of_date: DATE
   gateway: default
 - name: '"dataphile_catalog"."bronze"."transactions"'
   columns:
@@ -588,5 +583,5 @@
     transaction_code: TEXT
     __source_file: TEXT
     __ingested_at: TIMESTAMPTZ
-    __data_snapshot_date: DATE
+    __data_as_of_date: DATE
   gateway: default

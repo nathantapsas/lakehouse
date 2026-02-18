@@ -182,7 +182,7 @@ class IngestionLedgerStore:
                     d.file_key.raw_file_metadata_signature,
                     d.file_key.spec_hash,
                     str(d.raw_file_path),
-                    r.data_snapshot_date,
+                    r.data_as_of_date,
                     int(r.rows_extracted_total),
                     str(run_id),
                     now,
@@ -193,7 +193,7 @@ class IngestionLedgerStore:
             tx.executemany(
                 f"""
                 INSERT INTO {self._ops('loaded_files')}
-                (source_name, raw_file_metadata_signature, spec_hash, raw_file_path, data_snapshot_date, rows_loaded, run_id, loaded_at_utc)
+                (source_name, raw_file_metadata_signature, spec_hash, raw_file_path, data_as_of_date, rows_loaded, run_id, loaded_at_utc)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 ledger_rows,
@@ -259,7 +259,7 @@ class IngestionLedgerStore:
               raw_file_metadata_signature VARCHAR NOT NULL,
               spec_hash                   VARCHAR NOT NULL,
               raw_file_path               VARCHAR NOT NULL,
-              data_snapshot_date          DATE,
+              data_as_of_date             DATE,
               rows_loaded                 BIGINT  NOT NULL,
               run_id                      VARCHAR NOT NULL,
               loaded_at_utc               TIMESTAMP NOT NULL

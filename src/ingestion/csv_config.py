@@ -17,7 +17,7 @@ from ingestion.type_casters.date_caster import DateCaster
 from ingestion.type_casters.decimal_caster import DecimalCaster
 from ingestion.type_casters.integer_caster import IntegerCaster
 from ingestion.type_casters.string_caster import StringCaster
-from core.settings import SYSTEM_COL_SOURCE_FILE, SYSTEM_COL_INGESTED_AT, SYSTEM_COL_DATA_SNAPSHOT_DATE, SYSTEM_COL_LINE_NUMBER, SYSTEM_COL_RAW_LINE_CONTENT
+from core.settings import SYSTEM_COL_SOURCE_FILE, SYSTEM_COL_INGESTED_AT, SYSTEM_COL_DATA_AS_OF_DATE, SYSTEM_COL_LINE_NUMBER, SYSTEM_COL_RAW_LINE_CONTENT
 
 logger = logging.getLogger(__name__)
 
@@ -95,7 +95,7 @@ class CSVIngestSpec(StrictBaseModel):
                                 
         for partition_column in self.partition_by:
             if partition_column not in self.columns \
-                and partition_column not in {SYSTEM_COL_SOURCE_FILE, SYSTEM_COL_INGESTED_AT, SYSTEM_COL_DATA_SNAPSHOT_DATE, SYSTEM_COL_LINE_NUMBER, SYSTEM_COL_RAW_LINE_CONTENT}:
+                and partition_column not in {SYSTEM_COL_SOURCE_FILE, SYSTEM_COL_INGESTED_AT, SYSTEM_COL_DATA_AS_OF_DATE, SYSTEM_COL_LINE_NUMBER, SYSTEM_COL_RAW_LINE_CONTENT}:
                 raise ValueError(f"Partition column '{partition_column}' is not defined in columns or system columns")
         
         for business_key_column in self.business_key:

@@ -44,6 +44,7 @@ SYSTEM_COL_LINE_NUMBER = "__line_number"
 SYSTEM_COL_RAW_LINE_CONTENT = "__raw_line_content"
 SYSTEM_COL_DATA_SNAPSHOT_DATE = "__data_snapshot_date"
 SYSTEM_COL_INGESTED_AT = "__ingested_at"
+SYSTEM_COL_DATA_AS_OF_DATE = "__data_as_of_date"
 
 
 # Logging Configuration

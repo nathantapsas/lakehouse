@@ -14,8 +14,8 @@ from ingestion.extract import FastCSVExtractor
 from core.settings import (
     SYSTEM_COL_SOURCE_FILE,
     SYSTEM_COL_LINE_NUMBER,
-    SYSTEM_COL_DATA_SNAPSHOT_DATE,
     SYSTEM_COL_INGESTED_AT,
+    SYSTEM_COL_DATA_AS_OF_DATE
 )
 
 logger = logging.getLogger(__name__)
@@ -34,7 +34,7 @@ SPEC_TYPE_TO_ARROW_TYPE: dict[str, pa.DataType] = {
 SYSTEM_COLUMNS_ARROW: list[pa.Field] = [
     pa.field(SYSTEM_COL_SOURCE_FILE, pa.string(), nullable=True),
     pa.field(SYSTEM_COL_LINE_NUMBER, pa.int64(), nullable=True),
-    pa.field(SYSTEM_COL_DATA_SNAPSHOT_DATE, pa.date32(), nullable=True),
+    pa.field(SYSTEM_COL_DATA_AS_OF_DATE, pa.date32(), nullable=True),
     pa.field(SYSTEM_COL_INGESTED_AT, pa.timestamp("ms"), nullable=False),
 ]
 
@@ -91,13 +91,13 @@ def execute_extraction_task(
     try:
         bundle_layout.ensure_bundle_directory(tmp_bundle_dir)
 
-        snapshot_date = _parse_snapshot_date(raw_path, spec)
         ingested_at = datetime.now(timezone.utc)
+        data_as_of_date = discovered.data_as_of_date
 
         system_cols: dict[str, Any] = {
             SYSTEM_COL_SOURCE_FILE: raw_path.name,
             SYSTEM_COL_INGESTED_AT: ingested_at,
-            SYSTEM_COL_DATA_SNAPSHOT_DATE: snapshot_date,
+            SYSTEM_COL_DATA_AS_OF_DATE: data_as_of_date
         }
 
         artifact_relpath = "data.parquet"
@@ -113,7 +113,7 @@ def execute_extraction_task(
         manifest: dict[str, Any] = {
             "source_name": spec.name,
             "raw_file": str(raw_path),
-            "data_snapshot_date": snapshot_date.isoformat() if snapshot_date else None,
+            "data_as_of_date": data_as_of_date.isoformat() if data_as_of_date else None,
             "status": "COMPLETED",
             "metrics": {"total_rows": int(total_rows)},
             "artifacts": [{"relpath": artifact_relpath, "type": "data", "count": int(total_rows)}],
@@ -126,7 +126,7 @@ def execute_extraction_task(
         return ExtractionResult(
             extracted_bundle_path=final_bundle_dir, 
             rows_extracted_total=int(total_rows),
-            data_snapshot_date=snapshot_date
+            data_as_of_date=data_as_of_date
         )
 
     except Exception:
