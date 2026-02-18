@@ -23,3 +23,6 @@
 - Transaction table, 26-01-28:
     "880-0024-5"	"01/27/26"	"5,168.04"	"01/27/26"	"91324M109"	"A/C 077-2310-Q NOT FOUND 
     PRICE 13.3541 PRO INCLUDED"	"0."	"C"	"QRRX"	"6,308.10"	"09:36:19"	"shawal"	"202601"	""	"387.00"	"JE26014400"	"0"	"01/28/26"	"5"	"0000034579"	"01/27/26"	"NO"	"5168.04"	"YES"	"MBY - BUY-MANAGED ACCT"
+
+
+- Run explain analyze on some real data with muliple __data_snapshot_dates to make sure that we are not transforming the entire bronze table before filtering.

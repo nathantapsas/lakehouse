@@ -6,8 +6,8 @@ MODEL (
 @DEF('coalesce_to_text', (value) -> (COALESCE(value::TEXT, '<null>'))
 );
 
-WITH latest_data_snapshot_date AS (
-    SELECT MAX(@{sys_col_data_snapshot_date}) AS data_snapshot_date
+WITH latest_as_of_date AS (
+    SELECT MAX(__data_as_of_date) AS latest_date
     FROM silver_dataphile.accounts_snapshot
 ),
 
@@ -23,8 +23,8 @@ accounts AS (
         (a.sub_type_code IS NOT NULL)                                                       AS is_registered,
         (a.sub_type_code IS NULL)                                                           AS is_not_registered
     FROM silver_dataphile.accounts_snapshot a
-    JOIN latest_data_snapshot_date l
-        ON a.@{sys_col_data_snapshot_date} = l.data_snapshot_date
+    JOIN latest_as_of_date l
+        ON a.__data_as_of_date = l.latest_date
     WHERE 
         a.account_number LIKE '0%'              -- Client accounts
         AND a.status = 'ACTIVE'                 -- Active accounts
@@ -40,8 +40,8 @@ clients AS (
     (c.employee_code IN ('Y', 'P'))                                                          AS is_professional
 
     FROM silver_dataphile.clients_snapshot c
-    JOIN latest_data_snapshot_date l
-        ON c.@{sys_col_data_snapshot_date} = l.data_snapshot_date
+    JOIN latest_as_of_date l
+        ON c.__data_as_of_date = l.latest_date
     WHERE EXISTS (
         SELECT 1 FROM accounts a
         WHERE a.client_code = c.client_code
@@ -53,8 +53,8 @@ associated_parties AS (
         ap.*,
         (ap.sequence_number = 1)                                                             AS is_primary_processing_record
     FROM silver_dataphile.associated_parties_snapshot ap
-    JOIN latest_data_snapshot_date l
-        ON ap.@{sys_col_data_snapshot_date} = l.data_snapshot_date
+    JOIN latest_as_of_date l
+        ON ap.__data_as_of_date = l.latest_date
     WHERE 
         ap.status = 'ACTIVE'
         AND EXISTS (
@@ -71,8 +71,8 @@ addresses AS (
         (ad.country = 'CAN')                                                                 AS is_canadian,
         (ad.country = 'USA')                                                                 AS is_us
     FROM silver_dataphile.addresses_snapshot ad
-    JOIN latest_data_snapshot_date l
-        ON ad.@{sys_col_data_snapshot_date} = l.data_snapshot_date
+    JOIN latest_as_of_date l
+        ON ad.__data_as_of_date = l.latest_date
     WHERE EXISTS (
         SELECT 1 FROM clients c
         WHERE c.client_code = ad.client_code

@@ -1,19 +1,16 @@
 MODEL (
   name silver_dataphile.securities_snapshot,
   kind INCREMENTAL_BY_TIME_RANGE (
-    time_column as_of_date,
-    batch_size 1,
+    time_column __data_as_of_date,
   ),
-  allow_partials: true,
 );
 
-WITH src AS (
+WITH date_map AS (
   SELECT
-    s.*,
-    m.as_of_date
-  FROM bronze.securities s
-  JOIN bronze_meta.dataphile_asof_map m
-    ON s.@{sys_col_data_snapshot_date} = m.@{sys_col_data_snapshot_date}
+    @{sys_col_data_snapshot_date},
+    data_as_of_date                                                                               AS __data_as_of_date
+  FROM bronze_meta.dataphile_asof_map
+    WHERE data_as_of_date BETWEEN @start_ds AND @end_ds
 ),
 
 
@@ -58,18 +55,18 @@ transformed AS (
 
     comment::TEXT                                                                                 AS comment,
 
-
     @{sys_col_ingested_at},
-    @{sys_col_data_snapshot_date},
-    as_of_date
-  FROM src
-  WHERE as_of_date BETWEEN @start_ds AND @end_ds
+    __data_as_of_date
+
+  FROM bronze.securities s
+  JOIN date_map d
+    ON s.@{sys_col_data_snapshot_date} = d.@{sys_col_data_snapshot_date}
 ),
 
 deduplicated AS (
   @deduplicate(
     transformed,
-    partition_by := (cusip, as_of_date),
+    partition_by := (cusip, __data_as_of_date),
     order_by := ["@{sys_col_ingested_at} DESC"]
   )
 )

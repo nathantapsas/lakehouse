@@ -142,8 +142,11 @@ class Orchestrator:
         load_plans: dict[str, list[str]] = {}
         file_targets: dict[FileKey, set[str]] = {}
 
+        table_partitions: dict[str, set[str]] = {}
+
         # Plan loads + lineage
         for discovered, res in buffer:
+            spec = self.specs[discovered.file_key.source_name]
             targets = self.load_planner.plan_load(discovered.file_key, res.extracted_bundle_path)
 
             for t in targets:
@@ -152,8 +155,11 @@ class Orchestrator:
                 )
                 file_targets.setdefault(discovered.file_key, set()).add(t.target_table_fqn)
 
+                if spec.partition_by:
+                    table_partitions[t.target_table_fqn] = set(spec.partition_by)
+
         # Atomic commit (data + checkpoints + lineage)
-        store.commit_batch(buffer, load_plans, run_id=ctx.run_id, file_targets=file_targets)
+        store.commit_batch(buffer, load_plans, run_id=ctx.run_id, file_targets=file_targets, table_partition_configs=table_partitions)
 
         # Post-commit cleanup
         for _, res in buffer:

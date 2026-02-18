@@ -1,19 +1,16 @@
 MODEL (
   name silver_dataphile.clients_snapshot,
   kind INCREMENTAL_BY_TIME_RANGE (
-    time_column as_of_date,
-    batch_size 1,
-    on_destructive_change 'warn',
+    time_column __data_as_of_date,
   ),
 );
 
-WITH src AS (
+WITH date_map AS (
   SELECT
-    c.*,
-    m.as_of_date
-  FROM bronze.clients c
-  JOIN bronze_meta.dataphile_asof_map m
-    ON c.@{sys_col_data_snapshot_date} = m.@{sys_col_data_snapshot_date}
+    @{sys_col_data_snapshot_date},
+    data_as_of_date                                                                           AS __data_as_of_date
+  FROM bronze_meta.dataphile_asof_map
+    WHERE data_as_of_date BETWEEN @start_ds AND @end_ds
 ),
 
 transformed AS (
@@ -86,18 +83,21 @@ transformed AS (
     @cast_to_boolean(is_dormant)                                                              AS is_dormant,
 
     @{sys_col_ingested_at},
-    @{sys_col_data_snapshot_date},
-    as_of_date
+    __data_as_of_date
 
-  FROM src
-  WHERE as_of_date BETWEEN @start_ds AND @end_ds
+    FROM bronze.clients c
+    JOIN date_map m
+      ON c.@{sys_col_data_snapshot_date} = m.@{sys_col_data_snapshot_date}
+    -- Confirm whether this is necessary
+    WHERE c.@{sys_col_data_snapshot_date} = m.@{sys_col_data_snapshot_date}
 ),
 
 deduplicated AS (
   @deduplicate(
     transformed,
-    partition_by := (client_code, as_of_date),
+    partition_by := (client_code, __data_as_of_date),
     order_by := ["@{sys_col_ingested_at} DESC"]
   )
 )
-SELECT * FROM deduplicated
+
+SELECT * FROM deduplicated;

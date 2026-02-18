@@ -1,5 +1,8 @@
 name: accounts
 
+partition_by: 
+  - __data_snapshot_date
+
 source:
   file_path_glob_pattern: "DD_account_table_*.txt"
   delimiter: "\t"

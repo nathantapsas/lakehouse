@@ -98,6 +98,7 @@ class BundleLayout:
                 self._prune_empty_parents(tmp_bundle_dir.parent)
                 return
             except PermissionError:
+                logger.warning(f"PermissionError during bundle promotion (attempt {i + 1}/{max_retries}). Retrying...")
                 if i == max_retries - 1:
                     raise
                 time.sleep(0.05 * (i + 1))

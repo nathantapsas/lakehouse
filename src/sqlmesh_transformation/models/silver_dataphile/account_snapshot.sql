@@ -1,29 +1,27 @@
 MODEL (
   name silver_dataphile.accounts_snapshot,
   kind INCREMENTAL_BY_TIME_RANGE (
-    time_column as_of_date,
-    batch_size 1,
+    time_column __data_as_of_date,
   ),
-  grain (account_number, @{sys_col_data_snapshot_date}),
+  grain (account_number, __data_as_of_date),
   depends_on (silver_dataphile.clients_snapshot), -- Required for the foreign key audit
   audits (
     assert_foreign_key_same_day (
       parent_model := silver_dataphile.clients_snapshot,
       mappings := [(client_code, client_code)],
-      child_time_column := @{sys_col_data_snapshot_date},
-      parent_time_column := @{sys_col_data_snapshot_date},
+      child_time_column := __data_as_of_date,
+      parent_time_column := __data_as_of_date,
       blocking := false
     )
   ),
 );
 
-with src as (
-  select
-    a.*,
-    m.as_of_date
-  from bronze.accounts a
-  join bronze_meta.dataphile_asof_map m
-    on a.@{sys_col_data_snapshot_date} = m.@{sys_col_data_snapshot_date}
+WITH date_map AS (
+  SELECT
+    @{sys_col_data_snapshot_date},
+    data_as_of_date                                                                               AS __data_as_of_date
+  FROM bronze_meta.dataphile_asof_map
+    WHERE data_as_of_date BETWEEN @start_ds AND @end_ds
 ),
 
 transformed AS (
@@ -49,7 +47,7 @@ transformed AS (
     -- @split_part(account_type, '-', 2)                                                             AS account_type,
     @split_part(sub_type, '-', 1)                                                                 AS sub_type_code,
     CASE
-      WHEN sub_type IS NULL THEN 'Commission'
+      WHEN sub_type IS NULL THEN 'Cash'
       WHEN sub_type NOT LIKE '%-%' THEN ERROR(printf('Unexpected sub type format: %s', sub_type))
       ELSE @split_part(sub_type, '-', 2)
     END::TEXT                                                                                     AS sub_type,
@@ -114,17 +112,17 @@ transformed AS (
 
     @{sys_col_ingested_at},
     -- @{sys_col_source_file},
-    as_of_date,
-    @{sys_col_data_snapshot_date}
+    __data_as_of_date
 
-  FROM src
-  WHERE as_of_date BETWEEN @start_ds AND @end_ds
+  FROM bronze.accounts a
+  JOIN date_map m
+    ON a.@{sys_col_data_snapshot_date} = m.@{sys_col_data_snapshot_date}
 ),
 
 deduplicated AS (
   @deduplicate(
     transformed,
-    partition_by := (account_number, @{sys_col_data_snapshot_date}),
+    partition_by := (account_number, __data_as_of_date ),
     order_by := ["@{sys_col_ingested_at} DESC"]
   )
 )

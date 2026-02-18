@@ -121,7 +121,6 @@
   gateway: default
 - name: '"dataphile_catalog"."bronze"."addresses"'
   columns:
-    client_code: TEXT
     account_number: TEXT
     sequence_number: TEXT
     is_structured: TEXT
@@ -174,6 +173,7 @@
     email_address_3: TEXT
     email_address_4: TEXT
     email_confirms: TEXT
+    client_code: TEXT
     Address Lines: TEXT
     Confirm Copies.1: TEXT
     Fax Contract: TEXT
@@ -330,8 +330,21 @@
     Client Flex Field 3: TEXT
     Client Flex Field 4: TEXT
     Client Flex Field 5: TEXT
-    Consent To Share : TEXT
     Client Sub Type: TEXT
+    Consent To Share : TEXT
+    __source_file: TEXT
+    __ingested_at: TIMESTAMPTZ
+    __data_snapshot_date: DATE
+  gateway: default
+- name: '"dataphile_catalog"."bronze"."holidays"'
+  columns:
+    holiday_date: TEXT
+    last_date: TEXT
+    last_user: TEXT
+    last_time: TEXT
+    market_close: TEXT
+    region_code: TEXT
+    type_code: TEXT
     __source_file: TEXT
     __ingested_at: TIMESTAMPTZ
     __data_snapshot_date: DATE
@@ -461,23 +474,23 @@
     has_manual_price: TEXT
     has_reduced_margin: TEXT
     trades_options: TEXT
-    Approved: TEXT
     Category.1: TEXT
-    Commission Rate: TEXT
     Family: TEXT
     Fee: TEXT
     fund_class: TEXT
     Fund Link ID: TEXT
     Fund Series : TEXT
+    product: TEXT
+    Type: TEXT
+    registered_doc: TEXT
+    Restricted: TEXT
+    Risk Classification: TEXT
+    Approved: TEXT
+    Commission Rate: TEXT
     Negotiated Fee : TEXT
     Negotiated Trailer : TEXT
     Parent: TEXT
-    product: TEXT
-    registered_doc: TEXT
     Tax Structure: TEXT
-    Type: TEXT
-    Restricted: TEXT
-    Risk Classification: TEXT
     Mgn Code: TEXT
     RRSP Eligible: TEXT
     __source_file: TEXT
@@ -542,14 +555,6 @@
     IA Gross Commission: TEXT
     IA Net Commission: TEXT
     SEC Fee: TEXT
-    Last Dt: TEXT
-    Last Time: TEXT
-    Last User: TEXT
-    Other Tax: TEXT
-    Other Tax Type: TEXT
-    Prefig Commission: TEXT
-    Print State: TEXT
-    Hold Mail (Contract): TEXT
     __source_file: TEXT
     __ingested_at: TIMESTAMPTZ
     __data_snapshot_date: DATE

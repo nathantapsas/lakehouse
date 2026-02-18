@@ -1,0 +1,34 @@
+
+name: holidays
+
+source:
+  file_path_glob_pattern: "DD_holidays_table_*.txt"
+  delimiter: "\t"
+  encoding: "latin-1"
+  quoting: 1
+  quote_char: '"'
+
+# table_schema:
+#   business_key: [client_code]
+
+columns:
+  holiday_date:
+    csv_header: "Holiday"
+  
+  last_date:
+    csv_header: "Last Dt"
+  
+  last_user:
+    csv_header: "Last User"
+  
+  last_time:
+    csv_header: "Lst Time"
+  
+  market_close:
+    csv_header: "Market Close"
+  
+  region_code:
+    csv_header: "Region Code"
+  
+  type_code:
+    csv_header: "Type"

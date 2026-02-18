@@ -1,8 +1,7 @@
 MODEL (
   name silver_dataphile.transactions_snapshot,
   kind INCREMENTAL_BY_TIME_RANGE (
-    time_column as_of_date,
-    batch_size 1,
+    time_column process_date,
   ),
   depends_on (
     silver_dataphile.accounts_snapshot,   -- Required for the foreign key audit
@@ -12,30 +11,22 @@ MODEL (
     assert_foreign_key_same_day (
       parent_model := silver_dataphile.accounts_snapshot,
       mappings := [(account_number, account_number)],
-      child_time_column := as_of_date,
-      parent_time_column := as_of_date,
+      child_time_column := process_date,
+      parent_time_column := __data_as_of_date,
       blocking := false
     ),
     assert_foreign_key_same_day (
       parent_model := silver_dataphile.securities_snapshot,
       mappings := [(cusip, cusip)],
-      child_time_column := as_of_date,
-      parent_time_column := as_of_date,
+      child_time_column := process_date,
+      parent_time_column := __data_as_of_date,
       blocking := false
     )
   )
 );
 
-WITH src AS (
-  SELECT
-    t.*,
-    m.as_of_date
-  FROM bronze.transactions t
-  JOIN bronze_meta.dataphile_asof_map m
-    ON t.@{sys_col_data_snapshot_date} = m.@{sys_col_data_snapshot_date}
-),
 
-transformed AS (
+WITH transformed AS (
   SELECT
     @clean_cusip(cusip)                                                                           AS cusip,
     @clean_account_number(account_number)                                                         AS account_number,
@@ -61,21 +52,16 @@ transformed AS (
     @split_part(transaction_code, '-', 1)                                                         AS transaction_code,
     @split_part(transaction_code, '-', 2)                                                         AS transaction_code_label,
 
-    @{sys_col_ingested_at},
-    @{sys_col_data_snapshot_date},
-    as_of_date
-  FROM src
-),
+    @{sys_col_ingested_at}
 
-filtered AS (
-  SELECT *
-  FROM transformed
-  WHERE as_of_date BETWEEN @start_ds AND @end_ds  
+    FROM bronze.transactions
+    WHERE process_date BETWEEN @start_ds AND @end_ds  
+
 ),
 
 deduplicated AS (
   @deduplicate(
-    filtered,
+    transformed,
     partition_by := (
       process_date, 
       account_number, 
@@ -84,7 +70,7 @@ deduplicated AS (
       sequencer, 
       time_sequencer, 
     ),
-    order_by := ["as_of_date DESC", "@{sys_col_ingested_at} DESC"]
+    order_by := ["@{sys_col_ingested_at} DESC"]
   )
 )
 SELECT * FROM deduplicated;

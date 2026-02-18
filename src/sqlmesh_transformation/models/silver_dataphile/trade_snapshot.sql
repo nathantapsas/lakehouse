@@ -1,8 +1,7 @@
 MODEL (
   name silver_dataphile.trades_snapshot,
   kind INCREMENTAL_BY_TIME_RANGE (
-    time_column @{sys_col_data_snapshot_date},
-    batch_size 1,
+    time_column process_date,
   ),
   depends_on (
     silver_dataphile.accounts_snapshot,  -- Required for the foreign key audit
@@ -12,26 +11,25 @@ MODEL (
     assert_foreign_key_same_day (
       parent_model := silver_dataphile.accounts_snapshot,
       mappings := [(account_number, account_number)],
-      child_time_column := @{sys_col_data_snapshot_date},
-      parent_time_column := @{sys_col_data_snapshot_date},
+      child_time_column := process_date,
+      parent_time_column := __data_as_of_date,
       blocking := false
     ),
     assert_foreign_key_same_day (
       parent_model := silver_dataphile.accounts_snapshot,
       mappings := [(other_side_account_number, account_number)],
-      child_time_column := @{sys_col_data_snapshot_date},
-      parent_time_column := @{sys_col_data_snapshot_date},
+      child_time_column := process_date,
+      parent_time_column := __data_as_of_date,
       blocking := false
     ),
     assert_foreign_key_same_day (
       parent_model := silver_dataphile.securities_snapshot,
       mappings := [(cusip, cusip)],
-      child_time_column := @{sys_col_data_snapshot_date},
-      parent_time_column := @{sys_col_data_snapshot_date},
+      child_time_column := process_date,
+      parent_time_column := __data_as_of_date,
       blocking := false
     )
   ),
-  allow_partials: true
 );
 
 WITH transformed AS (
@@ -48,6 +46,7 @@ WITH transformed AS (
 
     @{sys_col_ingested_at},
     @{sys_col_data_snapshot_date}
+
   FROM bronze.trades
   WHERE @{sys_col_data_snapshot_date} BETWEEN @start_ds AND @end_ds
 ),
@@ -55,7 +54,8 @@ WITH transformed AS (
 deduplicated AS (
   @deduplicate(
     transformed,
-    partition_by := (trade_number, process_date, @{sys_col_data_snapshot_date}),
+    -- TODO: double check the primary key for this model
+    partition_by := (trade_number, process_date),
     order_by := ["@{sys_col_ingested_at} DESC"]
   )
 )

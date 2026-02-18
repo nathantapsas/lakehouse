@@ -5,8 +5,8 @@ MODEL (
 
 @DEF('coalesce_to_text', (value) -> (COALESCE(value::TEXT, '<null>')));
 
-WITH latest_data_snapshot_date AS (
-    SELECT MAX(@{sys_col_data_snapshot_date}) AS data_snapshot_date
+WITH latest_as_of_date AS (
+    SELECT MAX(process_date) AS latest_date
     FROM silver_dataphile.transactions_snapshot
 ),
 
@@ -19,7 +19,7 @@ transactions AS (
         t.*,
     FROM silver_dataphile.transactions_snapshot t
     JOIN reporting_year_start_date r
-        ON t.@{sys_col_data_snapshot_date} > r.reporting_year_start_date
+        ON t.process_date > r.reporting_year_start_date
 
 
     -- WHERE 
@@ -37,16 +37,16 @@ clients AS (
     (c.employee_code IN ('Y', 'P'))                                                          AS is_professional,
 
     FROM silver_dataphile.clients_snapshot c
-    JOIN latest_data_snapshot_date l
-        ON c.@{sys_col_data_snapshot_date} = l.data_snapshot_date
+    JOIN latest_as_of_date l
+        ON c.__data_as_of_date = l.latest_date
 ),
 
 accounts AS (
     SELECT 
         a.*,
     FROM silver_dataphile.accounts_snapshot a
-    JOIN latest_data_snapshot_date l
-        ON a.@{sys_col_data_snapshot_date} = l.data_snapshot_date
+    JOIN latest_as_of_date l
+        ON a.__data_as_of_date = l.latest_date
 ),
 
 transaction_validations AS (

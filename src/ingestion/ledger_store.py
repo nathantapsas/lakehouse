@@ -143,6 +143,7 @@ class IngestionLedgerStore:
         *,
         run_id: str,
         file_targets: dict[FileKey, set[str]],
+        table_partition_configs: dict[str, set[str]],
     ) -> None:
         """
         Atomic: bulk load parquet data + record checkpoints + record lineage.
@@ -164,7 +165,10 @@ class IngestionLedgerStore:
             for table_fqn, files in load_plans.items():
                 if not files:
                     continue
-                self._ensure_target_table_from_parquet(tx, table_fqn, files)
+
+                partition_keys = table_partition_configs.get(table_fqn, set())
+
+                self._ensure_target_table_from_parquet(tx, table_fqn, files, partition_keys)
                 tx.execute(
                     f"INSERT INTO {table_fqn} BY NAME "
                     f"SELECT * FROM read_parquet(?, union_by_name=true)",
@@ -307,14 +311,12 @@ class IngestionLedgerStore:
         conn: duckdb.DuckDBPyConnection,
         target_table_fqn: str,
         parquet_files: list[str],
+        partition_keys: list[str],
     ) -> None:
         """
-        Ensure table exists and evolves via ADD COLUMN only.
-
-        Strategy:
-          - If table missing: CREATE TABLE AS SELECT ... LIMIT 0 (infers schema)
-          - If exists: compare schemas, add missing columns as nullable
-          - If type mismatch: raise (do not silently coerce)
+        Ensure table exists.
+        If missing: Create table derived from parquet schema, optionally partitioned.
+        If exists: Evolve schema (add columns only).
         """
         parts = target_table_fqn.split(".")
         if len(parts) != 3:
@@ -336,25 +338,52 @@ class IngestionLedgerStore:
         ).fetchone()
 
         if not exists:
-            # Create from parquet schema
-            conn.execute(
-                f"""
-                CREATE TABLE {target_table_fqn} AS
-                SELECT * FROM read_parquet(?, union_by_name=true) LIMIT 0;
-                """,
+            # Introspect Parquet Schema
+            # We use LIMIT 0 to get the schema without reading all data
+            incoming = conn.execute(
+                "DESCRIBE SELECT * FROM read_parquet(?, union_by_name=true) LIMIT 0",
                 [parquet_files],
-            )
+            ).fetchall()
+            # incoming is list of (column_name, column_type, null, key, default, extra)
+
+            col_defs: list[str] = []
+            incoming_col_names: set[str] = set()
+            for row in incoming:
+                col_name = row[0]
+                col_type = row[1]
+                col_defs.append(f'"{col_name}" {col_type}')
+                incoming_col_names.add(col_name)
+
+            col_def_str = ",\n  ".join(col_defs)
+            
+            # 1. Create the table
+            logger.info("Creating table %s", target_table_fqn)
+            create_sql = f"CREATE TABLE {target_table_fqn} (\n  {col_def_str}\n)"
+            conn.execute(create_sql)
+            
+            # 2. Apply Partitioning (if requested)
+            if partition_keys:
+                # Validate keys exist
+                missing_keys = [k for k in partition_keys if k not in incoming_col_names]
+                if missing_keys:
+                    raise ValueError(f"Partition keys {missing_keys} not found in parquet schema for {target_table_fqn}")
+                
+                logger.info("Applying partitioning to %s: %s", target_table_fqn, partition_keys)
+                
+                # DuckLake requires ALTER TABLE ... SET PARTITIONED BY ...
+                keys_str = ", ".join(f'"{k}"' for k in partition_keys)
+                alter_sql = f"ALTER TABLE {target_table_fqn} SET PARTITIONED BY ({keys_str})"
+                conn.execute(alter_sql)
+            
             return
 
         # --- Table exists: evolve schema (add columns only) ---
 
         # Current table schema
         table_cols = conn.execute(f"DESCRIBE {target_table_fqn}").fetchall()
-        # DESCRIBE returns: (column_name, column_type, null, key, default, extra)
         table_types: dict[str, str] = {r[0]: str(r[1]).upper() for r in table_cols}
 
-        # Incoming parquet schema (use a relation so DuckDB resolves types)
-        # We ask DuckDB for column types using DESCRIBE on a SELECT.
+        # Incoming parquet schema
         incoming = conn.execute(
             "DESCRIBE SELECT * FROM read_parquet(?, union_by_name=true) LIMIT 0",
             [parquet_files],
@@ -364,12 +393,11 @@ class IngestionLedgerStore:
         # Add missing columns
         for col, typ in incoming_types.items():
             if col not in table_types:
-                # Add as nullable (DuckDB columns are nullable by default unless NOT NULL specified)
+                logger.info("Evolving schema for %s: Adding column %s %s", target_table_fqn, col, typ)
                 conn.execute(f'ALTER TABLE {target_table_fqn} ADD COLUMN "{col}" {typ}')
                 continue
 
             # Type mismatch? Fail fast.
-            # (You can soften this with a whitelist of “compatible” widenings later.)
             if table_types[col] != typ:
                 raise ValueError(
                     f"Schema mismatch for {target_table_fqn}.{col}: "
