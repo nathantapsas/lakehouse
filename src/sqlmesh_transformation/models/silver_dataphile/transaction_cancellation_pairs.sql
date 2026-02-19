@@ -25,65 +25,60 @@ keys AS (
 ),
 
 scoped AS (
-  SELECT t.*
+  SELECT 
+    t.*,
+    /* 
+       Determine "Side" for pairing (1 for Positive, -1 for Negative).
+       Priority: Quantity -> Cash -> Cost.
+       The cancel_match_key ensures magnitudes are identical, so we just need to separate opposites.
+    */
+    CASE
+      WHEN quantity > 0 THEN 1
+      WHEN quantity < 0 THEN -1
+      WHEN cash_amount > 0 THEN 1
+      WHEN cash_amount < 0 THEN -1
+      WHEN cost > 0 THEN 1
+      WHEN cost < 0 THEN -1
+      ELSE 0
+    END AS side
   FROM tx t
   JOIN keys k ON k.cancel_match_key = t.cancel_match_key
-),
-
-anchors AS (
-  SELECT *
-  FROM scoped
-  WHERE is_cancelled = TRUE
-),
-
-candidates AS (
-  SELECT
-    a.cancel_match_key,
-    a.row_id AS anchor_row_id,
-    b.row_id AS cand_row_id,
-
-    /* Priority 1: cancelled ↔ cancelled */
-    CASE WHEN b.is_cancelled THEN 0 ELSE 1 END AS s_cancelled,
-
-    /* Priority 2: same description */
-    CASE WHEN coalesce(a.description, '') = coalesce(b.description, '') THEN 0 ELSE 1 END AS s_desc,
-
-    /* Deterministic tie-breakers */
-    abs(a.time_sequencer - b.time_sequencer) AS s_time,
-    b.time_sequencer AS s_cand_time,
-    b.row_id AS s_cand_row_id
-
-  FROM anchors a
-  JOIN scoped b
-    ON b.cancel_match_key = a.cancel_match_key
-   AND b.row_id <> a.row_id
-   AND b.quantity    = -a.quantity
-   AND b.cash_amount = -a.cash_amount
-   AND b.cost        = -a.cost
 ),
 
 ranked AS (
   SELECT
     *,
+    /* 
+       Rank rows within each side to facilitate deterministic 1-to-1 matching.
+       Ordering priorities:
+       1. Cancelled rows (Consume these first).
+       2. Description (Heuristic: identical descriptions are better matches).
+       3. Time Sequencer (Heuristic: maintain chronological alignment).
+       4. Row ID (Deterministic tie-breaker).
+    */
     row_number() OVER (
-      PARTITION BY cancel_match_key, anchor_row_id
-      ORDER BY s_cancelled, s_desc, s_time, s_cand_time, s_cand_row_id
-    ) AS r_anchor,
-    row_number() OVER (
-      PARTITION BY cancel_match_key, cand_row_id
-      ORDER BY s_cancelled, s_desc, s_time, anchor_row_id
-    ) AS r_cand
-  FROM candidates
+      PARTITION BY cancel_match_key, side
+      ORDER BY 
+        CASE WHEN is_cancelled THEN 0 ELSE 1 END,
+        coalesce(description, ''),
+        time_sequencer,
+        row_id
+    ) AS match_rank
+  FROM scoped
+  WHERE side <> 0
 ),
 
 pairs AS (
   SELECT
-    cancel_match_key,
-    least(anchor_row_id, cand_row_id)    AS row_id_1,
-    greatest(anchor_row_id, cand_row_id) AS row_id_2
-  FROM ranked
-  WHERE r_anchor = 1 AND r_cand = 1
-  GROUP BY 1, 2, 3
+    a.cancel_match_key,
+    a.row_id AS row_id_1,
+    b.row_id AS row_id_2
+  FROM ranked a
+  JOIN ranked b
+    ON a.cancel_match_key = b.cancel_match_key
+   AND a.side = 1          -- Positive Side
+   AND b.side = -1         -- Negative Side
+   AND a.match_rank = b.match_rank
 )
 
 SELECT

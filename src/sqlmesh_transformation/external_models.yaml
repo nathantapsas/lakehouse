@@ -121,6 +121,7 @@
   gateway: default
 - name: '"dataphile_catalog"."bronze"."addresses"'
   columns:
+    client_code: TEXT
     account_number: TEXT
     sequence_number: TEXT
     is_structured: TEXT
@@ -173,7 +174,6 @@
     email_address_3: TEXT
     email_address_4: TEXT
     email_confirms: TEXT
-    client_code: TEXT
     Address Lines: TEXT
     Confirm Copies.1: TEXT
     Fax Contract: TEXT
@@ -420,8 +420,9 @@
   gateway: default
 - name: '"dataphile_catalog"."bronze"."securities"'
   columns:
-    status: TEXT
+    cusip: TEXT
     market: TEXT
+    status: TEXT
     security_class_code: TEXT
     security_name: TEXT
     isin: TEXT
@@ -479,7 +480,6 @@
     Tax Structure: TEXT
     Mgn Code: TEXT
     RRSP Eligible: TEXT
-    cusip: TEXT
     __source_file: TEXT
     __ingested_at: TIMESTAMPTZ
     __data_as_of_date: DATE

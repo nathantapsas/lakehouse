@@ -118,7 +118,7 @@ GROUP BY 1
 HAVING COUNT(*) > 1
 ;
 
-AUDIT (name in_coverage_cancelled_rows_must_be_pairable);
+AUDIT (name in_coverage_cancelled_rows_must_be_pairable, blocking false);
 WITH b AS (
   SELECT
     cancel_match_key,

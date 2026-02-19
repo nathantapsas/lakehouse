@@ -17,7 +17,7 @@ WITH base AS (
         '|',
         coalesce(t.account_number, '<null>'),
         coalesce(t.cusip, '<null>'),
-        coalesce(cast(t.trade_date as varchar), '<null>'),
+        -- coalesce(cast(t.trade_date as varchar), '<null>'),
         coalesce(cast(t.settlement_date as varchar), '<null>'),
         coalesce(t.currency, '<null>'),
         coalesce(cast(abs(t.quantity) as varchar), '<null>'),
