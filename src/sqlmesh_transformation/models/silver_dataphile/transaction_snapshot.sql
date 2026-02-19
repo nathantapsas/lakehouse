@@ -47,7 +47,7 @@ WITH transformed AS (
     @cast_to_date(settlement_date, format := '%m/%d/%y', prefer_past := False)                    AS settlement_date,
     @cast_to_date(trade_date, format := '%m/%d/%y', prefer_past := False)                         AS trade_date,
     @cast_to_boolean(transaction_cancelled)                                                       AS is_cancelled,
-    -- @cast_to_numeric(cost, negative_prefix := '-')                                                AS cost,
+    @cast_to_numeric(cost, negative_prefix := '-')                                                AS cost,
 
     @split_part(transaction_code, '-', 1)                                                         AS transaction_code,
     @split_part(transaction_code, '-', 2)                                                         AS transaction_code_label,

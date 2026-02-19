@@ -330,8 +330,8 @@
     Client Flex Field 3: TEXT
     Client Flex Field 4: TEXT
     Client Flex Field 5: TEXT
-    Client Sub Type: TEXT
     Consent To Share : TEXT
+    Client Sub Type: TEXT
     __source_file: TEXT
     __ingested_at: TIMESTAMPTZ
     __data_as_of_date: DATE
@@ -420,9 +420,8 @@
   gateway: default
 - name: '"dataphile_catalog"."bronze"."securities"'
   columns:
-    cusip: TEXT
-    market: TEXT
     status: TEXT
+    market: TEXT
     security_class_code: TEXT
     security_name: TEXT
     isin: TEXT
@@ -480,6 +479,7 @@
     Tax Structure: TEXT
     Mgn Code: TEXT
     RRSP Eligible: TEXT
+    cusip: TEXT
     __source_file: TEXT
     __ingested_at: TIMESTAMPTZ
     __data_as_of_date: DATE
