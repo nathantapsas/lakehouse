@@ -54,62 +54,62 @@
     Delinquent: TEXT
     Delivery Inst: TEXT
     Destination Route: TEXT
-    IA Net %: TEXT
     DTC Additional Party ID: TEXT
     DTC Additional Party Instr 1: TEXT
     DTC Additional Party Instr 2: TEXT
     DTC Agent ID: TEXT
+    IA Net %: TEXT
     DTC Bank Account: TEXT
     DTC Institution ID: TEXT
-    ESIR Number: TEXT
     DTC Participant Num: TEXT
     DTC Party Acct: TEXT
+    Guarantor Account: TEXT
+    KYC Update Date: TEXT
+    ESIR Number: TEXT
+    Lead Account: TEXT
+    Leveraged?: TEXT
     Plan Non Res Date: TEXT
     Reason Closed (Account): TEXT
-    Guarantor Account: TEXT
-    Participant: TEXT
-    KYC Update Date: TEXT
-    Lead Account: TEXT
-    Pension Registration: TEXT
-    Leveraged?: TEXT
-    Rights: TEXT
     National Policy 41: TEXT
-    RRIF Open Date: TEXT
+    Participant: TEXT
     National Policy 41b: TEXT
     National Policy 41c: TEXT
-    NI54 E-Mail: TEXT
-    NI54 Language: TEXT
+    Pension Registration: TEXT
     NI54 Change Date: TEXT
+    Rights: TEXT
+    NI54 E-Mail: TEXT
+    RRIF Open Date: TEXT
+    NI54 Language: TEXT
     NI54 Mail: TEXT
-    Ticket Base: TEXT
     NI54 Objecting: TEXT
-    Trader Code: TEXT
-    Initial Trade Date: TEXT
-    NM Loan Val House 1: TEXT
-    Trustee: TEXT
-    Initiator CUID: TEXT
-    NM Loan Val House 2: TEXT
-    US Clearing Agency: TEXT
-    Institution Code: TEXT
-    NM Loan Val House 3: TEXT
-    Division: TEXT
-    NM Loan Val Reg 1: TEXT
-    NM Loan Val Reg 2: TEXT
-    NM Loan Val Reg 3: TEXT
     NM Loan Val Custom 1: TEXT
     NM Loan Val Custom 2: TEXT
     NM Loan Val Custom 3: TEXT
+    Ticket Base: TEXT
+    NM Loan Val House 1: TEXT
+    Trader Code: TEXT
+    Initial Trade Date: TEXT
+    NM Loan Val House 2: TEXT
+    Trustee: TEXT
+    Initiator CUID: TEXT
+    NM Loan Val House 3: TEXT
+    US Clearing Agency: TEXT
+    Institution Code: TEXT
+    NM Loan Val Reg 1: TEXT
+    Division: TEXT
+    NM Loan Val Reg 2: TEXT
+    NM Loan Val Reg 3: TEXT
+    SSS Account Number: TEXT
+    SSS Department: TEXT
+    'SSS FINS #': TEXT
+    SSS Institution Name: TEXT
     client_code: TEXT
+    SSS Location: TEXT
     NASD Clearing Broker: TEXT
     NASD Executing Broker: TEXT
     NASD Numeric ID: TEXT
-    SSS Account Number: TEXT
-    SSS Department: TEXT
     MF History?: TEXT
     Monthly Statement: TEXT
-    'SSS FINS #': TEXT
-    SSS Institution Name: TEXT
-    SSS Location: TEXT
     Account Flex Field 1: TEXT
     Account Flex Field 2: TEXT
     Account Flex Field 3: TEXT
@@ -121,7 +121,6 @@
   gateway: default
 - name: '"dataphile_catalog"."bronze"."addresses"'
   columns:
-    client_code: TEXT
     account_number: TEXT
     sequence_number: TEXT
     is_structured: TEXT
@@ -174,6 +173,7 @@
     email_address_3: TEXT
     email_address_4: TEXT
     email_confirms: TEXT
+    client_code: TEXT
     Address Lines: TEXT
     Confirm Copies.1: TEXT
     Fax Contract: TEXT
@@ -330,8 +330,8 @@
     Client Flex Field 3: TEXT
     Client Flex Field 4: TEXT
     Client Flex Field 5: TEXT
-    Consent To Share : TEXT
     Client Sub Type: TEXT
+    Consent To Share : TEXT
     __source_file: TEXT
     __ingested_at: TIMESTAMPTZ
     __data_as_of_date: DATE
